@@ -833,8 +833,8 @@ export const useAppStore = create<AppState>()(
         notificationsEnabled: true,
         provinces: ['Pichincha', 'Guayas', 'Azuay', 'Manabí'],
         autoScanEnabled: false,
-        telegramBotToken: '',
-        telegramChatId: '',
+        telegramBotToken: '8688586581:AAHQDWMwyzfPnMLY8--PZzzlQbUGayjZpZE',
+        telegramChatId: '1999119022',
       },
       updateSettings: (s) => set((state) => ({ settings: { ...state.settings, ...s } })),
 
@@ -893,7 +893,7 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v4',
+      name: 'ecuador-agents-store-v5',
       partialize: (state) => ({
         settings: state.settings,
         companies: state.companies,
