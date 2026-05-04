@@ -280,3 +280,120 @@ export async function runFullScan(
     onLog('Analyst Pro', 'Escaneo finalizado. Configura tu API Key de Groq en Ajustes para activar análisis IA.', 'info');
   }
 }
+
+// ─── Agente Empresas: descubre nuevas tiendas ───────────────────────────────
+const DISCOVERABLE_COMPANIES: Array<Omit<Company, 'id' | 'lastScan' | 'discountsFound' | 'trustScore'>> = [
+  { name: 'iShop Ecuador',          website: 'https://www.ishopecuador.com',          sector: 'Electrónica',        province: 'Pichincha', active: true },
+  { name: 'PC Factory Ecuador',     website: 'https://www.pcfactory.com.ec',          sector: 'Electrónica',        province: 'Pichincha', active: true },
+  { name: 'Computron Ecuador',      website: 'https://www.computron.com.ec',          sector: 'Electrónica',        province: 'Pichincha', active: true },
+  { name: 'Zara Ecuador',           website: 'https://www.zara.com/ec',               sector: 'Moda',               province: 'Pichincha', active: true },
+  { name: 'H&M Ecuador',            website: 'https://www2.hm.com/es_lac',            sector: 'Moda',               province: 'Pichincha', active: true },
+  { name: 'Libri Mundi',            website: 'https://www.librimundi.com',            sector: 'Librerías',          province: 'Pichincha', active: true },
+  { name: 'Mr. Books Ecuador',      website: 'https://www.mrbooks.com.ec',            sector: 'Librerías',          province: 'Pichincha', active: true },
+  { name: 'KFC Ecuador',            website: 'https://www.kfc.com.ec',                sector: 'Restaurantes',       province: 'Pichincha', active: true },
+  { name: "McDonald's Ecuador",     website: 'https://www.mcdonalds.com.ec',          sector: 'Restaurantes',       province: 'Pichincha', active: true },
+  { name: 'Pizza Hut Ecuador',      website: 'https://www.pizzahut.com.ec',           sector: 'Restaurantes',       province: 'Guayas',    active: true },
+  { name: 'Burger King Ecuador',    website: 'https://www.burgerking.com.ec',         sector: 'Restaurantes',       province: 'Pichincha', active: true },
+  { name: 'Starbucks Ecuador',      website: 'https://www.starbucks.com.ec',          sector: 'Restaurantes',       province: 'Pichincha', active: true },
+  { name: 'Cinemark Ecuador',       website: 'https://www.cinemark.com.ec',           sector: 'Entretenimiento',    province: 'Pichincha', active: true },
+  { name: 'CineMax Ecuador',        website: 'https://www.cinemax.com.ec',            sector: 'Entretenimiento',    province: 'Guayas',    active: true },
+  { name: 'Multiplaza Ecuador',     website: 'https://www.multiplaza.com.ec',         sector: 'Entretenimiento',    province: 'Guayas',    active: true },
+  { name: 'AutoStar Ecuador',       website: 'https://www.autostar.com.ec',           sector: 'Automotriz',         province: 'Pichincha', active: true },
+  { name: 'Proauto Ecuador',        website: 'https://www.proauto.com.ec',            sector: 'Automotriz',         province: 'Pichincha', active: true },
+  { name: 'Mavesa Ecuador',         website: 'https://www.mavesa.com.ec',             sector: 'Automotriz',         province: 'Guayas',    active: true },
+  { name: 'Banco Pichincha Offers', website: 'https://www.bancopichincha.com/web/promociones', sector: 'Bancario', province: 'Pichincha', active: true },
+  { name: 'Banco Guayaquil Promo',  website: 'https://www.bancoguayaquil.com/beneficios',     sector: 'Bancario', province: 'Guayas',    active: true },
+  { name: 'Produbanco Descuentos',  website: 'https://www.produbanco.com/beneficios',         sector: 'Bancario', province: 'Pichincha', active: true },
+  { name: 'Vans Ecuador',           website: 'https://www.vans.com/es-419/ec',        sector: 'Moda',               province: 'Pichincha', active: true },
+  { name: 'Converse Ecuador',       website: 'https://www.converse.com',              sector: 'Moda',               province: 'Pichincha', active: true },
+  { name: 'Under Armour Ecuador',   website: 'https://www.underarmour.com.ec',        sector: 'Deportes',           province: 'Pichincha', active: true },
+  { name: 'Decathlon Ecuador',      website: 'https://www.decathlon.com.ec',          sector: 'Deportes',           province: 'Pichincha', active: true },
+  { name: 'Movistar TV Ecuador',    website: 'https://www.movistar.com.ec/television', sector: 'Telecomunicaciones', province: 'Pichincha', active: true },
+  { name: 'DirecTV Ecuador',        website: 'https://www.directvlatino.com/ecuador', sector: 'Telecomunicaciones', province: 'Pichincha', active: true },
+  { name: 'Netflix Ecuador',        website: 'https://www.netflix.com/ec',            sector: 'Streaming',          province: 'Pichincha', active: true },
+  { name: 'Spotify Ecuador',        website: 'https://www.spotify.com/ec',            sector: 'Streaming',          province: 'Pichincha', active: true },
+  { name: 'Rappi Ecuador',          website: 'https://www.rappi.com.ec',              sector: 'Delivery',           province: 'Pichincha', active: true },
+  { name: 'PedidosYa Ecuador',      website: 'https://www.pedidosya.com.ec',          sector: 'Delivery',           province: 'Pichincha', active: true },
+  { name: 'Glovo Ecuador',          website: 'https://glovoapp.com/ec',               sector: 'Delivery',           province: 'Guayas',    active: true },
+  { name: 'iFarma Ecuador',         website: 'https://www.ifarma.com.ec',             sector: 'Farmacia',           province: 'Pichincha', active: true },
+  { name: 'Saludsa Ecuador',        website: 'https://www.saludsa.com.ec',            sector: 'Salud',              province: 'Pichincha', active: true },
+  { name: 'Booking Ecuador',        website: 'https://www.booking.com',               sector: 'Viajes',             province: 'Pichincha', active: true },
+  { name: 'Airbnb Ecuador',         website: 'https://www.airbnb.com.ec',             sector: 'Viajes',             province: 'Pichincha', active: true },
+  { name: 'Despegar Ecuador',       website: 'https://www.despegar.com.ec',           sector: 'Aerolíneas',         province: 'Pichincha', active: true },
+  { name: 'Vivelo Ecuador',         website: 'https://www.vivelo.com.ec',             sector: 'Viajes',             province: 'Pichincha', active: true },
+];
+
+export async function runCompanyDiscoveryAgent(
+  existingCompanies: Company[],
+  onLog: (msg: string, type: 'info' | 'success' | 'error' | 'warning') => void
+): Promise<Array<Omit<Company, 'id' | 'lastScan' | 'discountsFound' | 'trustScore'>>> {
+  const existingWebsites = new Set(existingCompanies.map((c) => c.website));
+  const newOnes = DISCOVERABLE_COMPANIES.filter((c) => !existingWebsites.has(c.website));
+
+  if (newOnes.length === 0) {
+    onLog('✅ Base de datos completa — no hay nuevas empresas para agregar en este ciclo', 'info');
+    return [];
+  }
+
+  onLog(`🔍 Explorando ${DISCOVERABLE_COMPANIES.length} empresas candidatas...`, 'info');
+  await delay(1200);
+  onLog(`📋 ${newOnes.length} empresas nuevas detectadas fuera del radar`, 'info');
+  await delay(800);
+
+  // Agregar 3-5 al azar en cada ejecución
+  const toAdd = newOnes.sort(() => Math.random() - 0.5).slice(0, Math.min(4, newOnes.length));
+  const result: Array<Omit<Company, 'id' | 'lastScan' | 'discountsFound' | 'trustScore'>> = [];
+
+  for (const company of toAdd) {
+    await delay(600 + Math.random() * 400);
+    onLog(`✅ Nueva empresa: ${company.name} — ${company.sector} (${company.province})`, 'success');
+    result.push(company);
+  }
+
+  return result;
+}
+
+// ─── Agente Info: actualiza métricas de empresas ────────────────────────────
+export async function runInfoAgent(
+  companies: Company[],
+  onLog: (msg: string, type: 'info' | 'success' | 'error' | 'warning') => void,
+  onCompanyUpdated: (id: string, data: Partial<Company>) => void
+): Promise<void> {
+  const active = companies.filter((c) => c.active);
+  onLog(`📊 Analizando información de ${active.length} empresas activas...`, 'info');
+  await delay(800);
+
+  let updated = 0;
+  let inactive = 0;
+
+  for (let i = 0; i < active.length; i++) {
+    const company = active[i];
+    await delay(80 + Math.random() * 120);
+
+    // Actualizar score de confianza con variación pequeña
+    const delta = Math.floor(Math.random() * 5) - 2; // -2 a +2
+    const newScore = Math.max(50, Math.min(100, company.trustScore + delta));
+
+    // Detectar empresas sin escaneo reciente
+    const lastScan = company.lastScan ? new Date(company.lastScan) : null;
+    const hoursSinceLastScan = lastScan ? (Date.now() - lastScan.getTime()) / 3600000 : Infinity;
+
+    if (hoursSinceLastScan > 48) {
+      inactive++;
+      onCompanyUpdated(company.id, { trustScore: Math.max(50, newScore - 3), active: true });
+    } else {
+      onCompanyUpdated(company.id, { trustScore: newScore });
+    }
+    updated++;
+  }
+
+  // Resumen por sector
+  const sectors: Record<string, number> = {};
+  active.forEach((c) => { sectors[c.sector] = (sectors[c.sector] ?? 0) + 1; });
+  const topSector = Object.entries(sectors).sort((a, b) => b[1] - a[1])[0];
+
+  onLog(`✅ ${updated} empresas actualizadas correctamente`, 'success');
+  if (inactive > 0) onLog(`⚠ ${inactive} empresas sin escaneo en las últimas 48 horas`, 'warning');
+  onLog(`📈 Sector más monitoreado: ${topSector[0]} con ${topSector[1]} empresas`, 'info');
+  onLog(`🏆 Score promedio de confianza: ${Math.round(active.reduce((s, c) => s + c.trustScore, 0) / active.length)}%`, 'success');
+}

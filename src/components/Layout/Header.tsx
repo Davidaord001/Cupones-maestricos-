@@ -98,7 +98,7 @@ export default function Header() {
     if (next && Notification.permission === 'default') Notification.requestPermission();
   }
 
-  const canScan = !!settings.groqApiKey && !isScanning;
+  const canScan = !isScanning;
   const newDiscounts = discounts.filter((d) => !d.predictedDiscount).length;
   const hasTelegram = !!(settings.telegramBotToken && settings.telegramChatId);
 

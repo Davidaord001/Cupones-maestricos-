@@ -37,11 +37,10 @@ interface AppState {
 }
 
 const defaultAgents: Agent[] = [
-  { id: 'agent-1', name: 'Scout Ecuador', role: 'Rastreador de empresas nacionales', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '🔍' },
-  { id: 'agent-2', name: 'Discount Hunter', role: 'Detector de descuentos en tiempo real', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '🏷️' },
-  { id: 'agent-3', name: 'Predictor AI', role: 'Predicción de descuentos futuros con IA', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '🤖' },
-  { id: 'agent-4', name: 'Analyst Pro', role: 'Análisis profundo de tendencias', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📊' },
-  { id: 'agent-5', name: 'News Monitor', role: 'Monitoreo de noticias y redes sociales', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📰' },
+  { id: 'agent-cupones',  name: 'Agente Cupones',  role: 'Escanea las 173 empresas en busca de descuentos y cupones nuevos', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '🏷️' },
+  { id: 'agent-empresas', name: 'Agente Empresas', role: 'Descubre nuevas tiendas para agregar al radar de monitoreo',          status: 'idle', lastRun: null, tasksCompleted: 0, icon: '🔍' },
+  { id: 'agent-info',     name: 'Agente Info',     role: 'Actualiza información y métricas de confianza de las empresas',     status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📊' },
+  { id: 'agent-telegram', name: 'Agente Telegram', role: 'Envía notificaciones y resúmenes de descuentos por Telegram',        status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📱' },
 ];
 
 const TODAY = new Date().toISOString();
