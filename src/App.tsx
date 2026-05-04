@@ -9,6 +9,7 @@ import AgentsPage from './pages/AgentsPage';
 import SettingsPage from './pages/SettingsPage';
 import { useAppStore } from './store/useAppStore';
 import { runFullScan } from './services/agentService';
+import { sendTelegramMessage, buildNewDiscountAlert } from './services/telegramService';
 
 const PAGES: Record<string, React.ReactNode> = {
   dashboard: <DashboardPage />,
@@ -28,7 +29,7 @@ function App() {
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
 
-    if (!settings.autoScanEnabled || !settings.groqApiKey) return;
+    if (!settings.autoScanEnabled) return;
 
     const intervalMs = (settings.scanIntervalMinutes ?? 60) * 60 * 1000;
 
@@ -44,7 +45,14 @@ function App() {
           useAppStore.getState().companies,
           settings.groqApiKey,
           (agentName, msg, type) => addLog({ agentName, message: msg, type }),
-          (d) => addDiscount(d),
+          (d) => {
+            addDiscount(d);
+            // Enviar Telegram por cada descuento real nuevo
+            const s = useAppStore.getState().settings;
+            if (!d.predictedDiscount && s.telegramBotToken && s.telegramChatId) {
+              sendTelegramMessage(s.telegramBotToken, s.telegramChatId, buildNewDiscountAlert(d));
+            }
+          },
           (id, data) => updateCompany(id, data)
         );
         const discountsAfter = useAppStore.getState().discounts.length;
@@ -74,10 +82,10 @@ function App() {
     }
 
     intervalRef.current = setInterval(triggerScan, intervalMs);
-    addLog({ agentName: 'Auto-Agente', message: `🔄 Auto-escaneo activado cada ${settings.scanIntervalMinutes} min`, type: 'info' });
+    addLog({ agentName: 'Auto-Agente', message: `🔄 Auto-escaneo activado cada ${settings.scanIntervalMinutes} min. Descuentos nuevos → Telegram automático`, type: 'info' });
 
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [settings.autoScanEnabled, settings.groqApiKey, settings.scanIntervalMinutes]);
+  }, [settings.autoScanEnabled, settings.scanIntervalMinutes]);
 
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">

@@ -892,7 +892,7 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v5',
+      name: 'ecuador-agents-store-v6',
       partialize: (state) => ({
         settings: state.settings,
         companies: state.companies,

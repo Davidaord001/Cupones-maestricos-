@@ -45,7 +45,7 @@ export default function Header() {
   }, [nextScanAt]);
 
   async function handleScan() {
-    if (isScanning || !settings.groqApiKey) return;
+    if (isScanning) return;
     setIsScanning(true);
     agents.forEach((a) => updateAgentStatus(a.id, 'running'));
     const prevCount = discounts.filter((d) => !d.predictedDiscount).length;
@@ -89,10 +89,6 @@ export default function Header() {
   }
 
   function toggleAutoScan() {
-    if (!settings.groqApiKey) {
-      addLog({ agentName: 'Sistema', message: '⚠ Configura tu API Key de Groq para activar el auto-escaneo', type: 'warning' });
-      return;
-    }
     const next = !settings.autoScanEnabled;
     updateSettings({ autoScanEnabled: next });
     if (next && Notification.permission === 'default') Notification.requestPermission();
