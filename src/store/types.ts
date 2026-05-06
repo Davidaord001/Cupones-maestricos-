@@ -21,6 +21,9 @@ export interface Discount {
   discountPercent: number | null;
   originalPrice: number | null;
   discountedPrice: number | null;
+  currency?: 'USD' | 'COP';
+  originalPriceUSD?: number | null;
+  discountedPriceUSD?: number | null;
   validFrom: string;
   validUntil: string | null;
   sourceUrl: string;
@@ -30,6 +33,12 @@ export interface Discount {
   sector: string;
   imageUrl?: string;
   specs?: string[];
+  country?: 'Ecuador' | 'Colombia';
+}
+
+export interface ExchangeRates {
+  USD_COP: number;
+  lastUpdated: string;
 }
 
 export interface AgentLog {

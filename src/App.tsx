@@ -7,23 +7,47 @@ import DiscountsPage from './pages/DiscountsPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import AgentsPage from './pages/AgentsPage';
 import SettingsPage from './pages/SettingsPage';
+import ComparatorPage from './pages/ComparatorPage';
 import { useAppStore } from './store/useAppStore';
 import { runFullScan } from './services/agentService';
 import { sendTelegramMessage, buildNewDiscountAlert } from './services/telegramService';
+import { fetchExchangeRates } from './services/currencyService';
 
 const PAGES: Record<string, React.ReactNode> = {
   dashboard: <DashboardPage />,
   companies: <CompaniesPage />,
   discounts: <DiscountsPage />,
+  comparator: <ComparatorPage />,
   analytics: <AnalyticsPage />,
   agents: <AgentsPage />,
   settings: <SettingsPage />,
 };
 
 function App() {
-  const { activeTab, settings, isScanning, setIsScanning, companies, addLog, addDiscount, updateCompany, updateAgentStatus, incrementAgentTasks, agents } = useAppStore();
+  const { activeTab, settings, isScanning, setIsScanning, companies, addLog, addDiscount, updateCompany, updateAgentStatus, incrementAgentTasks, agents, updateExchangeRates, exchangeRates } = useAppStore();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prevDiscountCount = useRef<number>(0);
+
+  // ─── Tipo de cambio automático cada 8 horas ────────────────────────────
+  useEffect(() => {
+    const updateRates = async () => {
+      try {
+        const rates = await fetchExchangeRates();
+        updateExchangeRates(rates);
+        addLog({ agentName: 'Agente Divisa', message: `💱 Tipo de cambio actualizado: 1 USD = ${rates.USD_COP.toLocaleString('es-CO')} COP`, type: 'success' });
+      } catch {
+        addLog({ agentName: 'Agente Divisa', message: '⚠ No se pudo actualizar el tipo de cambio, usando tasa de referencia', type: 'warning' });
+      }
+    };
+
+    // Actualizar si hace más de 8h o no hay dato
+    const lastUpdate = exchangeRates?.lastUpdated ? new Date(exchangeRates.lastUpdated).getTime() : 0;
+    const hoursOld = (Date.now() - lastUpdate) / 3600000;
+    if (hoursOld >= 8) updateRates();
+
+    const rateInterval = setInterval(updateRates, 8 * 60 * 60 * 1000); // cada 8h
+    return () => clearInterval(rateInterval);
+  }, []);
 
   // ─── Auto-escaneo ─────────────────────────────────────────────────────────
   useEffect(() => {

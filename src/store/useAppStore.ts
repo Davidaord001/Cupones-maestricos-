@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Company, Discount, Agent, AgentLog, AppSettings } from './types';
+import type { Company, Discount, Agent, AgentLog, AppSettings, ExchangeRates } from './types';
 import { format } from 'date-fns';
 
 interface AppState {
@@ -29,6 +29,10 @@ interface AppState {
   addLog: (log: Omit<AgentLog, 'id' | 'timestamp'>) => void;
   clearLogs: () => void;
 
+  // Exchange rates
+  exchangeRates: ExchangeRates;
+  updateExchangeRates: (r: ExchangeRates) => void;
+
   // UI
   isScanning: boolean;
   setIsScanning: (v: boolean) => void;
@@ -41,6 +45,7 @@ const defaultAgents: Agent[] = [
   { id: 'agent-empresas', name: 'Agente Empresas', role: 'Descubre nuevas tiendas para agregar al radar de monitoreo',          status: 'idle', lastRun: null, tasksCompleted: 0, icon: '🔍' },
   { id: 'agent-info',     name: 'Agente Info',     role: 'Actualiza información y métricas de confianza de las empresas',     status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📊' },
   { id: 'agent-telegram', name: 'Agente Telegram', role: 'Envía notificaciones y resúmenes de descuentos por Telegram',        status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📱' },
+  { id: 'agent-divisa',   name: 'Agente Divisa',   role: 'Monitorea el tipo de cambio COP/USD cada 8 horas y convierte precios en tiempo real', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '💱' },
 ];
 
 const TODAY = new Date().toISOString();
@@ -886,15 +891,19 @@ export const useAppStore = create<AppState>()(
         })),
       clearLogs: () => set({ logs: [] }),
 
+      exchangeRates: { USD_COP: 4200, lastUpdated: new Date().toISOString() },
+      updateExchangeRates: (r) => set({ exchangeRates: r }),
+
       isScanning: false,
       setIsScanning: (v) => set({ isScanning: v }),
       activeTab: 'dashboard',
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v6',
+      name: 'ecuador-agents-store-v7',
       partialize: (state) => ({
         settings: state.settings,
+        exchangeRates: state.exchangeRates,
         companies: state.companies,
         discounts: state.discounts,
       }),

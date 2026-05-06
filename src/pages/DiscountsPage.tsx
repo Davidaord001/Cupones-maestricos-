@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import { Tag, ExternalLink, Clock, TrendingUp, Sparkles, Trophy, ArrowUpDown, Star, Flame, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Tag, Clock, TrendingUp, Sparkles, Trophy, ArrowUpDown, Star, Flame, ShoppingCart, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import { format, formatDistanceToNow, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { formatCurrency } from '../services/currencyService';
 
 const PAGE_SIZE = 20;
 
@@ -23,19 +24,37 @@ function getSavings(d: { discountPercent: number | null; originalPrice: number |
 }
 
 export default function DiscountsPage() {
-  const { discounts } = useAppStore();
+  const { discounts, exchangeRates } = useAppStore();
   const [typeFilter, setTypeFilter] = useState<'all' | 'real' | 'predicted'>('all');
   const [sectorFilter, setSectorFilter] = useState('Todos');
+  const [countryFilter, setCountryFilter] = useState('Todos');
+  const [productSearch, setProductSearch] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('discount');
   const [page, setPage] = useState(1);
 
   const sectors = ['Todos', ...Array.from(new Set(discounts.map((d) => d.sector).filter(Boolean))).sort()];
 
+  // Detectar países disponibles
+  const countries = useMemo(() => {
+    const set = new Set<string>();
+    discounts.forEach((d) => {
+      const c = (d as any).country ?? (d.companyName.toLowerCase().includes('colombia') ? 'Colombia' : 'Ecuador');
+      set.add(c);
+    });
+    return ['Todos', ...Array.from(set).sort()];
+  }, [discounts]);
+
   const filtered = useMemo(() => {
     const base = discounts.filter((d) => {
       const matchType = typeFilter === 'all' || (typeFilter === 'predicted' ? d.predictedDiscount : !d.predictedDiscount);
       const matchSector = sectorFilter === 'Todos' || d.sector === sectorFilter;
-      return matchType && matchSector;
+      const country = (d as any).country ?? (d.companyName.toLowerCase().includes('colombia') ? 'Colombia' : 'Ecuador');
+      const matchCountry = countryFilter === 'Todos' || country === countryFilter;
+      const matchProduct = productSearch === '' ||
+        d.title.toLowerCase().includes(productSearch.toLowerCase()) ||
+        d.companyName.toLowerCase().includes(productSearch.toLowerCase()) ||
+        d.description.toLowerCase().includes(productSearch.toLowerCase());
+      return matchType && matchSector && matchCountry && matchProduct;
     });
     return base.sort((a, b) => {
       if (sortKey === 'discount') return (b.discountPercent ?? 0) - (a.discountPercent ?? 0);
@@ -45,7 +64,7 @@ export default function DiscountsPage() {
       if (sortKey === 'price_asc') return (a.discountedPrice ?? a.originalPrice ?? 9999) - (b.discountedPrice ?? b.originalPrice ?? 9999);
       return 0;
     });
-  }, [discounts, typeFilter, sectorFilter, sortKey]);
+  }, [discounts, typeFilter, sectorFilter, countryFilter, productSearch, sortKey]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -133,8 +152,14 @@ export default function DiscountsPage() {
                   </div>
                   {d.discountedPrice && (
                     <div className="flex items-center gap-2">
-                      {d.originalPrice && <span className="text-gray-500 text-xs line-through">${d.originalPrice}</span>}
-                      <span className={`text-sm font-bold ${medalColors[i]}`}>${d.discountedPrice}</span>
+                      {d.originalPrice && (
+                        <span className="text-gray-500 text-xs line-through">
+                          {(d as any).currency === 'COP' ? formatCurrency(d.originalPrice, 'COP') : `$${d.originalPrice}`}
+                        </span>
+                      )}
+                      <span className={`text-sm font-bold ${medalColors[i]}`}>
+                        {(d as any).currency === 'COP' ? formatCurrency(d.discountedPrice, 'COP') : `$${d.discountedPrice}`}
+                      </span>
                     </div>
                   )}
                   <a href={d.sourceUrl} target="_blank" rel="noopener noreferrer"
@@ -168,6 +193,34 @@ export default function DiscountsPage() {
         >
           {sectors.map((s) => <option key={s}>{s}</option>)}
         </select>
+
+        {/* País */}
+        {countries.length > 2 && (
+          <select
+            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm"
+            value={countryFilter}
+            onChange={(e) => { setCountryFilter(e.target.value); setPage(1); }}
+          >
+            {countries.map((c) => <option key={c}>{c}</option>)}
+          </select>
+        )}
+
+        {/* Búsqueda por producto */}
+        <div className="relative min-w-[180px]">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Buscar producto..."
+            value={productSearch}
+            onChange={(e) => { setProductSearch(e.target.value); setPage(1); }}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-8 pr-7 py-2 text-white text-sm focus:outline-none focus:border-yellow-500"
+          />
+          {productSearch && (
+            <button onClick={() => setProductSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
+              <X size={13} />
+            </button>
+          )}
+        </div>
 
         {/* Ordenar */}
         <div className="flex items-center gap-2">
@@ -257,14 +310,31 @@ export default function DiscountsPage() {
                   {(d.originalPrice || d.discountedPrice) && (
                     <div className="flex items-center gap-3 bg-gray-800/60 rounded-lg px-3 py-2">
                       {d.originalPrice && (
-                        <span className="text-gray-500 text-sm line-through">${d.originalPrice.toFixed(2)}</span>
+                        <span className="text-gray-500 text-sm line-through">
+                          {(d as any).currency === 'COP'
+                            ? formatCurrency(d.originalPrice, 'COP')
+                            : `$${d.originalPrice.toFixed(2)}`}
+                        </span>
                       )}
                       {d.discountedPrice && (
-                        <span className="text-green-400 text-xl font-black">${d.discountedPrice.toFixed(2)}</span>
+                        <div className="flex flex-col">
+                          <span className="text-green-400 text-xl font-black">
+                            {(d as any).currency === 'COP'
+                              ? formatCurrency(d.discountedPrice, 'COP')
+                              : `$${d.discountedPrice.toFixed(2)}`}
+                          </span>
+                          {(d as any).currency === 'COP' && exchangeRates?.USD_COP && (
+                            <span className="text-gray-500 text-xs">
+                              ≈ ${(d.discountedPrice / exchangeRates.USD_COP).toFixed(0)} USD
+                            </span>
+                          )}
+                        </div>
                       )}
                       {savings > 0 && (
                         <span className="ml-auto text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-semibold">
-                          Ahorrás ${savings.toFixed(2)}
+                          {(d as any).currency === 'COP'
+                            ? `Ahorrás ${formatCurrency(savings, 'COP')}`
+                            : `Ahorrás $${savings.toFixed(2)}`}
                         </span>
                       )}
                     </div>

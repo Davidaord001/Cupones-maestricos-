@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { Play, Loader2, Trash2, ActivitySquare, RefreshCw } from 'lucide-react';
 import { runFullScan, runCompanyDiscoveryAgent, runInfoAgent } from '../services/agentService';
 import { sendTelegramMessage, buildDailyDigest } from '../services/telegramService';
+import { fetchExchangeRates } from '../services/currencyService';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -56,6 +57,22 @@ const AGENTS_CONFIG = [
     ],
   },
   {
+    id: 'agent-divisa',
+    name: 'Agente Divisa',
+    icon: '💱',
+    borderColor: 'border-amber-500/40',
+    bgColor: 'bg-amber-500/5',
+    btnColor: 'bg-amber-500 hover:bg-amber-400 text-gray-900',
+    statusColor: 'text-amber-400 bg-amber-500/20',
+    description: 'Consulta el tipo de cambio real COP/USD en tiempo real y actualiza la conversión de precios en toda la plataforma.',
+    capabilities: [
+      '💵 Tasa COP/USD en tiempo real',
+      '🔄 Actualiza cada 8 horas automáticamente',
+      '💰 Convierte precios automáticamente',
+      '📊 Fuentes: Frankfurter + Open Exchange Rates',
+    ],
+  },
+  {
     id: 'agent-telegram',
     name: 'Agente Telegram',
     icon: '📱',
@@ -77,6 +94,7 @@ export default function AgentsPage() {
   const {
     agents, logs, clearLogs, addLog, discounts, companies, settings,
     updateAgentStatus, incrementAgentTasks, addDiscount, updateCompany, addCompany, isScanning, setIsScanning,
+    updateExchangeRates, exchangeRates,
   } = useAppStore();
 
   const [runningAgent, setRunningAgent] = useState<string | null>(null);
@@ -138,6 +156,15 @@ export default function AgentsPage() {
             addLog({ agentName: 'Agente Telegram', message: `❌ Error Telegram: ${result.error}`, type: 'error' });
           }
         }
+      } else if (agentId === 'agent-divisa') {
+        addLog({ agentName: 'Agente Divisa', message: '💱 Consultando tipo de cambio COP/USD...', type: 'info' });
+        const rates = await fetchExchangeRates();
+        updateExchangeRates(rates);
+        addLog({
+          agentName: 'Agente Divisa',
+          message: `✅ Tipo de cambio actualizado: 1 USD = ${rates.USD_COP.toLocaleString('es-CO')} COP`,
+          type: 'success',
+        });
       }
 
       updateAgentStatus(agentId, 'completed');
@@ -166,7 +193,7 @@ export default function AgentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-white font-bold text-xl">Agentes Virtuales</h2>
-          <p className="text-gray-400 text-sm mt-0.5">4 agentes especializados — ejecuta individualmente o todos a la vez</p>
+          <p className="text-gray-400 text-sm mt-0.5">5 agentes especializados — ejecuta individualmente o todos a la vez</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex gap-2 text-xs">
@@ -230,6 +257,16 @@ export default function AgentsPage() {
                   </li>
                 ))}
               </ul>
+
+              {/* Tipo de cambio actual (solo para agente-divisa) */}
+              {cfg.id === 'agent-divisa' && exchangeRates && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-amber-400 text-xs font-semibold">Tasa actual</span>
+                  <span className="text-white text-sm font-black">
+                    1 USD = {exchangeRates.USD_COP.toLocaleString('es-CO')} COP
+                  </span>
+                </div>
+              )}
 
               {/* Footer: stats + run button */}
               <div className="flex items-center justify-between pt-2 border-t border-gray-800/70">
