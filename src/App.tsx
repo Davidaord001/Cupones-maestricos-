@@ -14,6 +14,7 @@ import { useAppStore } from './store/useAppStore';
 import { runFullScan } from './services/agentService';
 import { sendTelegramMessage, buildNewDiscountAlert } from './services/telegramService';
 import { fetchExchangeRates } from './services/currencyService';
+import { initPipeline, startPipeline, stopPipeline } from './services/agentPipelineService';
 
 const PAGES: Record<string, React.ReactNode> = {
   dashboard: <DashboardPage />,
@@ -31,6 +32,26 @@ function App() {
   const { activeTab, settings, isScanning, setIsScanning, companies, addLog, addDiscount, updateCompany, updateAgentStatus, incrementAgentTasks, agents, updateExchangeRates, exchangeRates } = useAppStore();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prevDiscountCount = useRef<number>(0);
+  const pipelineInitRef = useRef(false);
+
+  // ─── Pipeline automático (cola de agentes + retry) ─────────────────────
+  useEffect(() => {
+    if (!pipelineInitRef.current) {
+      pipelineInitRef.current = true;
+      initPipeline(
+        () => useAppStore.getState(),
+        (msg, type) => useAppStore.getState().addLog({ agentName: 'Pipeline', message: msg, type }),
+      );
+    }
+
+    if (settings.autoScanEnabled) {
+      startPipeline(settings.scanIntervalMinutes ?? 60);
+    } else {
+      stopPipeline();
+    }
+
+    return () => { stopPipeline(); };
+  }, [settings.autoScanEnabled, settings.scanIntervalMinutes]);
 
   // ─── Tipo de cambio automático cada 8 horas ────────────────────────────
   useEffect(() => {

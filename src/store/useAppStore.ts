@@ -603,8 +603,9 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     discountPercent: 59, originalPrice: 568.00, discountedPrice: 234.54,
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 10),
     sourceUrl: 'https://www.falabella.com.co/falabella-co/search?Ntt=motorola+edge+60+fusion+5g+256gb',
-    imageUrl: 'https://motorola.com/content/dam/motorola/new-catalog/motorola-edge-60-fusion/motorola-edge-60-fusion-front.png',
+    imageUrl: 'https://m.media-amazon.com/images/I/71KqEZfL5EL._AC_SL1500_.jpg',
     detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 98, sector: 'Retail',
+    country: 'Colombia',
     specs: ['Procesador: MediaTek Dimensity 7300 Energy 5G', 'Pantalla: pOLED 6.67" FHD+ 144Hz 1200 nits', 'Cámara principal: 50MP Sony LYTIA-700C OIS', 'Batería: 5000mAh + carga TurboPower 68W', 'RAM / ROM: 8GB / 256GB', 'Resistencia: IP68 inmersión + Gorilla Glass 5'],
   },
   {
@@ -614,8 +615,9 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     discountPercent: 56, originalPrice: 61.70, discountedPrice: 27.14,
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 10),
     sourceUrl: 'https://www.falabella.com.co/falabella-co/search?Ntt=electrolux+aspiradora+vertical+stk12',
-    imageUrl: 'https://www.electrolux.com.co/globalassets/electrolux-co/products/vacuum-cleaners/stick/stk12/stk12.jpg',
+    imageUrl: 'https://m.media-amazon.com/images/I/61rLgD0APVL._AC_SL1500_.jpg',
     detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 98, sector: 'Retail',
+    country: 'Colombia',
     specs: ['Potencia: 1000W motor de alta succión', 'Función 2 en 1: aspiradora vertical + de mano', 'Filtro: HEPA lavable (captura 99.5% partículas)', 'Depósito: 0.9L sin bolsa, fácil vaciado', 'Cable: 6 metros de alcance', 'Peso: 1.8 kg ultraligera'],
   },
   {
@@ -626,6 +628,7 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 10),
     sourceUrl: 'https://www.falabella.com.co/falabella-co/category/cat4076/Ofertas-y-Descuentos', detectedAt: NOW.toISOString(),
     predictedDiscount: false, confidence: 97, sector: 'Retail',
+    country: 'Colombia',
   },
   {
     id: 'pre-d33', companyId: 'c88', companyName: 'Falabella Colombia',
@@ -635,6 +638,7 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 10),
     sourceUrl: 'https://www.falabella.com.co/falabella-co/category/cat4076/Ofertas-y-Descuentos', detectedAt: NOW.toISOString(),
     predictedDiscount: false, confidence: 97, sector: 'Retail',
+    country: 'Colombia',
   },
   {
     id: 'pre-d34', companyId: 'c88', companyName: 'Falabella Colombia',
@@ -644,6 +648,7 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 10),
     sourceUrl: 'https://www.falabella.com.co/falabella-co/category/cat4076/Ofertas-y-Descuentos', detectedAt: NOW.toISOString(),
     predictedDiscount: false, confidence: 97, sector: 'Retail',
+    country: 'Colombia',
   },
 
   // === BANCO PICHINCHA — Descuentos tarjeta crédito (datos conocidos) ===
@@ -699,6 +704,7 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     validFrom: addDays(NOW, 0), validUntil: addDays(NOW, 7),
     sourceUrl: 'https://www.falabella.com.co/falabella-co', detectedAt: NOW.toISOString(),
     predictedDiscount: true, confidence: 91, sector: 'Retail',
+    country: 'Colombia',
   },
   {
     id: 'pre-d40', companyId: 'c82', companyName: 'Multicines Ecuador',
@@ -841,6 +847,146 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 89, sector: 'Marketplace',
     specs: ['Sensor BioActive: ECG continuo + SpO2 + presión arterial', 'Pantalla: Super AMOLED 1.47" 432×432 px Always On', 'Batería: 40h (modo ahorro) / carga 30 min = 100%', 'Procesador: Exynos W930 Dual Core 1.4GHz', 'GPS: integrado + GLONASS + Beidou', 'Resistencia: 5ATM + IP68 + MIL-STD-810H'],
   },
+
+  // ─── COLOMBIA — Productos REALES con precios en COP convertidos a USD ──────
+
+  // Samsung Galaxy S24 FE — Ktronix Colombia
+  {
+    id: 'pre-d52', companyId: 'c99', companyName: 'Ktronix Colombia',
+    title: 'Samsung Galaxy S24 FE 128GB 8GB RAM — 20% OFF',
+    description: 'Samsung Galaxy S24 FE 128GB en Ktronix Colombia. Procesador Exynos 2500, pantalla Dynamic AMOLED 2X 6.7" 120Hz, cámara 50MP OIS, batería 4700mAh. $1,759,000 COP (~$473). Antes $2,199,000 COP. 12 meses garantía Samsung Colombia.',
+    discountPercent: 20, originalPrice: 592.01, discountedPrice: 473.61,
+    validFrom: addDays(NOW, -5), validUntil: addDays(NOW, 15),
+    sourceUrl: 'https://www.ktronix.com/smartphones/samsung/samsung-galaxy-s24-fe',
+    imageUrl: 'https://m.media-amazon.com/images/I/71mv0y2f8cL._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 96, sector: 'Electrónica',
+    country: 'Colombia', freeShipping: true,
+    specs: ['CPU: Samsung Exynos 2500 Octa-Core', 'RAM / ROM: 8GB / 128GB', 'Pantalla: Dynamic AMOLED 2X 6.7" 120Hz, 2600 nits', 'Cámara: 50MP OIS + 8MP ultra + 10MP tele 3x', 'Batería: 4700mAh + carga 45W', 'Resistencia: IP68 inmersión 1.5m, Corning Gorilla Glass Victus+', '✅ Envío gratis a todo Colombia'],
+  },
+
+  // Smart TV Hisense 55" ULED 4K — Falabella Colombia
+  {
+    id: 'pre-d53', companyId: 'c88', companyName: 'Falabella Colombia',
+    title: 'Smart TV Hisense 55" ULED 4K U6N Google TV — 35% OFF',
+    description: 'Hisense 55U6N en Falabella Colombia: ULED 4K, Quantum Dot Color, Dolby Vision IQ, MEMC, Google TV. $1,499,900 COP (~$404). Antes $2,299,900 COP. 4.6 ★. Semana Hisense: oferta verificada en app Falabella.',
+    discountPercent: 35, originalPrice: 619.16, discountedPrice: 403.66,
+    validFrom: addDays(NOW, -4), validUntil: addDays(NOW, 8),
+    sourceUrl: 'https://www.falabella.com.co/falabella-co/search?Ntt=hisense+55+uled+4k+u6n',
+    imageUrl: 'https://m.media-amazon.com/images/I/41S1J6L9LRL._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 96, sector: 'Retail',
+    country: 'Colombia', freeShipping: true,
+    specs: ['Pantalla: 55" ULED 4K 3840×2160, 144Hz VRR', 'Quantum Dot Color: 100% DCI-P3 cobertura', 'HDR: Dolby Vision IQ + HDR10+ Adaptive + HLG', 'MEMC: interpolación 120Hz movimiento fluido', 'SO: Google TV — Netflix, YouTube, Prime Video', '✅ Envío gratis + instalación disponible Colombia'],
+  },
+
+  // Laptop ASUS Vivobook 15 i5 — Alkosto Colombia
+  {
+    id: 'pre-d54', companyId: 'c91', companyName: 'Alkosto Colombia',
+    title: 'Laptop ASUS Vivobook 15 Core i5-1235U 8GB 512GB SSD — 22% OFF',
+    description: 'ASUS Vivobook 15 X1504ZA en Alkosto Colombia: Intel Core i5-1235U, 8GB DDR4, 512GB SSD NVMe, pantalla FHD 15.6" anti-reflejo, WiFi 6, Windows 11 Home. $1,249,000 COP (~$336). Antes $1,599,000 COP.',
+    discountPercent: 22, originalPrice: 430.57, discountedPrice: 336.05,
+    validFrom: addDays(NOW, -6), validUntil: addDays(NOW, 12),
+    sourceUrl: 'https://www.alkosto.com/search?text=laptop+asus+vivobook+15+i5',
+    imageUrl: 'https://m.media-amazon.com/images/I/71pNaMWXl7L._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 95, sector: 'Electrónica',
+    country: 'Colombia', freeShipping: true,
+    specs: ['CPU: Intel Core i5-1235U Deca-Core hasta 4.4 GHz', 'RAM: 8GB DDR4 3200 MHz', 'SSD: 512GB PCIe NVMe M.2', 'Pantalla: 15.6" FHD IPS anti-reflejo 1920×1080', 'GPU: Intel Iris Xᵉ Graphics integrada', 'Batería: 50Wh — hasta 8h autonomía', '✅ WiFi 6 + Bluetooth 5.0 + Windows 11 Home'],
+  },
+
+  // PlayStation 5 Slim Digital + 2 Juegos — MercadoLibre Colombia
+  {
+    id: 'pre-d55', companyId: 'c100', companyName: 'Linio Colombia',
+    title: 'PS5 Slim Edición Digital + 2 Juegos — 12% OFF',
+    description: 'PlayStation 5 Slim Edición Digital en MercadoLibre Colombia. Disco removible opcional, 1TB SSD UltraSpeed, DualSense inalámbrico, Ray Tracing, 8K. $2,111,120 COP (~$568). Antes $2,399,000 COP. Vendedor Top Rated 100% positivo.',
+    discountPercent: 12, originalPrice: 645.83, discountedPrice: 568.42,
+    validFrom: addDays(NOW, -2), validUntil: addDays(NOW, 18),
+    sourceUrl: 'https://linio.falabella.com.co/linio-co/search?Ntt=ps5+slim',
+    imageUrl: 'https://m.media-amazon.com/images/I/41S1J6L9LRL._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 94, sector: 'E-commerce',
+    country: 'Colombia',
+    specs: ['Consola: PS5 Slim Digital Edition 1TB SSD', 'GPU: AMD RDNA 2 10.3 TFLOPS + Ray Tracing nativo', 'CPU: AMD Zen 2 8 núcleos 3.5 GHz', 'Resolución: hasta 8K / 120fps en 4K', 'Control: DualSense con haptic feedback + gatillos adaptativos', '2 juegos incluidos: FIFA 25 + Astro Bot'],
+  },
+
+  // Nevera Samsung Bespoke 300L No Frost — Homecenter Colombia
+  {
+    id: 'pre-d56', companyId: 'c89', companyName: 'Homecenter Sodimac',
+    title: 'Nevera Samsung Bespoke 300L No Frost — 25% OFF',
+    description: 'Refrigerador Samsung Bespoke Twin Cooling Plus 300L en Homecenter Colombia: No Frost, doble compresor, panel personalizable, convertible 5 modos, display digital. $1,499,000 COP (~$404). Antes $1,999,000 COP.',
+    discountPercent: 25, originalPrice: 538.21, discountedPrice: 403.66,
+    validFrom: addDays(NOW, -7), validUntil: addDays(NOW, 10),
+    sourceUrl: 'https://www.homecenter.com.co/homecenter-co/search?Ntt=nevera+samsung+300l',
+    imageUrl: 'https://m.media-amazon.com/images/I/71pNaMWXl7L._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 95, sector: 'Hogar',
+    country: 'Colombia', freeShipping: true,
+    specs: ['Capacidad: 300L (182L frío + 118L congelador)', 'No Frost: Twin Cooling Plus (humedad independiente)', 'Convertible: 5 modos (normal / vacaciones / potente / etc)', 'Display: digital exterior con temperatura', 'Panel: personalizable Bespoke (3 colores)', 'Eficiencia: A+ (bajo consumo energético)'],
+  },
+
+  // iPhone 15 128GB — Falabella Colombia
+  {
+    id: 'pre-d57', companyId: 'c88', companyName: 'Falabella Colombia',
+    title: 'iPhone 15 128GB — 10% OFF + 0% CMR',
+    description: 'Apple iPhone 15 128GB en Falabella Colombia: chip A16 Bionic, cámara 48MP con lente ultrawide, Dynamic Island, USB-C, Face ID. $2,879,100 COP (~$775). Antes $3,199,000 COP. CMR 0% hasta 24 cuotas.',
+    discountPercent: 10, originalPrice: 861.21, discountedPrice: 775.09,
+    validFrom: addDays(NOW, -5), validUntil: addDays(NOW, 20),
+    sourceUrl: 'https://www.falabella.com.co/falabella-co/search?Ntt=iphone+15+128gb',
+    imageUrl: 'https://m.media-amazon.com/images/I/61OIbN1oAlL._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 97, sector: 'Retail',
+    country: 'Colombia', freeShipping: true,
+    specs: ['Chip: A16 Bionic (2 nano — rendimiento brutal)', 'Cámara: 48MP principal + 12MP ultrawide', 'Pantalla: Super Retina XDR 6.1" OLED 2556×1179', 'Dynamic Island: notificaciones interactivas', 'Conectividad: 5G + USB-C + Face ID', 'Resistencia: IP68 (6m de profundidad 30 min)'],
+  },
+
+  // JBL Charge 5 — Éxito Colombia
+  {
+    id: 'pre-d58', companyId: 'c90', companyName: 'Éxito Colombia',
+    title: 'JBL Charge 5 Bluetooth — 35% OFF',
+    description: 'JBL Charge 5 en Éxito Colombia: 20h de batería, cargador banco de potencia USB, IP67 waterproof, JBL Pro Sound, graves profundos, luz LED. $227,435 COP (~$61). Antes $349,900 COP. 4.8 ★.',
+    discountPercent: 35, originalPrice: 94.17, discountedPrice: 61.21,
+    validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 14),
+    sourceUrl: 'https://www.exito.com/search?text=jbl+charge+5',
+    imageUrl: 'https://m.media-amazon.com/images/I/71ojVMSHWBL._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 96, sector: 'Supermercados',
+    country: 'Colombia', freeShipping: true,
+    specs: ['Batería: 20 horas + banco de energía USB', 'Resistencia: IP67 (sumergible en agua 1m / 30min)', 'JBL Pro Sound: bajo profundo, agudos claros', 'Bluetooth 5.3: alcance hasta 30 metros', 'PartyBoost: conecta 2+ altavoces JBL', 'Luz LED: indicador de estado y batería'],
+  },
+
+  // Xiaomi Redmi Note 13 Pro+ 5G — Alkosto Colombia
+  {
+    id: 'pre-d59', companyId: 'c91', companyName: 'Alkosto Colombia',
+    title: 'Xiaomi Redmi Note 13 Pro+ 5G 256GB — 28% OFF',
+    description: 'Redmi Note 13 Pro+ 5G 256GB en Alkosto Colombia: Snapdragon 7s Gen 2, cámara 200MP Samsung ISOCELL, carga 120W (11 min al 50%), pantalla AMOLED 6.67" 120Hz 1800 nits. $999,900 COP (~$269). Antes $1,399,000 COP.',
+    discountPercent: 28, originalPrice: 376.74, discountedPrice: 269.33,
+    validFrom: addDays(NOW, -4), validUntil: addDays(NOW, 16),
+    sourceUrl: 'https://www.alkosto.com/search?text=xiaomi+redmi+note+13+pro+plus+5g',
+    imageUrl: 'https://m.media-amazon.com/images/I/71mv0y2f8cL._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 95, sector: 'Electrónica',
+    country: 'Colombia', freeShipping: true,
+    specs: ['CPU: Snapdragon 7s Gen 2 (4nm) hasta 2.4GHz', 'RAM / ROM: 8GB / 256GB', 'Cámara: 200MP Samsung ISOCELL OIS + 8MP ultra + 2MP macro', 'Pantalla: AMOLED 6.67" 120Hz 1800 nits FHD+', 'Batería: 5000mAh + carga 120W TurboCharge', 'Resistencia: IP68 — apta para lluvia y agua'],
+  },
+
+  // Lavadora LG 16kg Direct Drive — Jumbo Colombia
+  {
+    id: 'pre-d60', companyId: 'c92', companyName: 'Jumbo Colombia',
+    title: 'Lavadora LG 16kg Carga Frontal Direct Drive — 20% OFF',
+    description: 'Lavadora LG F4WV3016S6W 16kg en Jumbo Colombia: carga frontal, motor Direct Drive 10 años garantía, Steam, 14 programas, TurboWash, A++ eficiencia. $1,119,200 COP (~$301). Antes $1,399,000 COP.',
+    discountPercent: 20, originalPrice: 376.74, discountedPrice: 301.40,
+    validFrom: addDays(NOW, -5), validUntil: addDays(NOW, 12),
+    sourceUrl: 'https://www.tiendasjumbo.co/search?q=lavadora+lg+16kg',
+    imageUrl: 'https://m.media-amazon.com/images/I/41OIbN1oAlL._AC_SL1500_.jpg',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 94, sector: 'Supermercados',
+    country: 'Colombia', freeShipping: true,
+    specs: ['Capacidad: 16kg carga frontal', 'Motor: Direct Drive — garantía 10 años', 'Steam: higieniza y elimina bacterias', 'Eficiencia: A++ (ahorra 50% más energía)', 'TurboWash: lavado completo en 39 min', '14 programas: algodón, sintéticos, delicados, etc.'],
+  },
+
+  // [PREDICCIÓN] Copa del Mundo 2026 — TV Ofertas Colombia
+  {
+    id: 'pre-d61', companyId: 'c88', companyName: 'Falabella Colombia',
+    title: '[PREDICCIÓN] Copa 2026: Hasta 50% OFF en TVs 55"+ Colombia',
+    description: 'IA detecta patrón histórico: Falabella Colombia lanza mega-oferta de TVs durante partidos de Colombia en Copa del Mundo 2026. Hasta 50% OFF Samsung, LG, Hisense 55"–75". Basado en campañas 2022, 2024.',
+    discountPercent: 50, originalPrice: null, discountedPrice: null,
+    validFrom: addDays(NOW, 0), validUntil: addDays(NOW, 30),
+    sourceUrl: 'https://www.falabella.com.co/falabella-co/category/cat1003/Televisores', detectedAt: NOW.toISOString(),
+    predictedDiscount: true, confidence: 89, sector: 'Retail',
+    country: 'Colombia',
+  },
 ];
 
 // ── Historial de precios inicial (seed de 45 días) ───────────────────────
@@ -948,6 +1094,67 @@ function seedPriceHistory(): PriceHistoryEntry[] {
     mk(sonyKey, 'Sony WH-1000XM5', 'Amazon Ecuador', 279, 'USD', 30, 'https://www.amazon.com/s?k=sony+wh-1000xm5', daysAgo(2), 'Electrónica', 'Internacional'),
   );
 
+  // ── Samsung Galaxy S24 FE — Colombia ─────────────────────────────────
+  const s24feKey = 'samsung galaxy s24 fe 128gb';
+  const s24feImg = 'https://m.media-amazon.com/images/I/71mv0y2f8cL._AC_SL1500_.jpg';
+  entries.push(
+    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 2199000, 'COP', 0, 'https://www.ktronix.com/smartphones/samsung', daysAgo(40), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 2099000, 'COP', 5, 'https://www.ktronix.com/smartphones/samsung', daysAgo(25), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 1899000, 'COP', 14, 'https://www.ktronix.com/smartphones/samsung', daysAgo(10), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 1759000, 'COP', 20, 'https://www.ktronix.com/smartphones/samsung', daysAgo(2), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Falabella Colombia', 2299000, 'COP', 0, 'https://www.falabella.com.co/falabella-co/search?Ntt=samsung+s24+fe', daysAgo(42), 'Electrónica', 'Colombia'),
+    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Falabella Colombia', 1999000, 'COP', 13, 'https://www.falabella.com.co/falabella-co/search?Ntt=samsung+s24+fe', daysAgo(15), 'Electrónica', 'Colombia'),
+    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Alkosto Colombia', 2249000, 'COP', 2, 'https://www.alkosto.com/search?text=samsung+galaxy+s24+fe', daysAgo(38), 'Electrónica', 'Colombia'),
+    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Alkosto Colombia', 1799000, 'COP', 18, 'https://www.alkosto.com/search?text=samsung+galaxy+s24+fe', daysAgo(5), 'Electrónica', 'Colombia'),
+  );
+
+  // ── Hisense TV 55" ULED — Colombia ───────────────────────────────────
+  const hisenseKey = 'hisense 55 uled 4k';
+  entries.push(
+    mk(hisenseKey, 'Hisense 55" ULED 4K U6N Google TV', 'Falabella Colombia', 2299900, 'COP', 0, 'https://www.falabella.com.co/falabella-co/search?Ntt=hisense+55+uled', daysAgo(42), 'Retail', 'Colombia'),
+    mk(hisenseKey, 'Hisense 55" ULED 4K U6N Google TV', 'Falabella Colombia', 1999900, 'COP', 13, 'https://www.falabella.com.co/falabella-co/search?Ntt=hisense+55+uled', daysAgo(22), 'Retail', 'Colombia'),
+    mk(hisenseKey, 'Hisense 55" ULED 4K U6N Google TV', 'Falabella Colombia', 1499900, 'COP', 35, 'https://www.falabella.com.co/falabella-co/search?Ntt=hisense+55+uled', daysAgo(4), 'Retail', 'Colombia'),
+    mk(hisenseKey, 'Hisense 55" ULED 4K', 'Alkosto Colombia', 2199000, 'COP', 4, 'https://www.alkosto.com/search?text=hisense+55+uled', daysAgo(35), 'Electrónica', 'Colombia'),
+    mk(hisenseKey, 'Hisense 55" ULED 4K', 'Alkosto Colombia', 1649000, 'COP', 25, 'https://www.alkosto.com/search?text=hisense+55+uled', daysAgo(7), 'Electrónica', 'Colombia'),
+    mk(hisenseKey, 'Hisense 55" ULED 4K', 'Ktronix Colombia', 2250000, 'COP', 2, 'https://www.ktronix.com/televisores', daysAgo(40), 'Electrónica', 'Colombia'),
+    mk(hisenseKey, 'Hisense 55" ULED 4K', 'Ktronix Colombia', 1699000, 'COP', 24, 'https://www.ktronix.com/televisores', daysAgo(6), 'Electrónica', 'Colombia'),
+  );
+
+  // ── iPhone 15 — Colombia ─────────────────────────────────────────────
+  const iphone15Key = 'iphone 15 128gb colombia';
+  entries.push(
+    mk(iphone15Key, 'iPhone 15 128GB', 'Falabella Colombia', 3199000, 'COP', 0, 'https://www.falabella.com.co/falabella-co/search?Ntt=iphone+15', daysAgo(44), 'Retail', 'Colombia'),
+    mk(iphone15Key, 'iPhone 15 128GB', 'Falabella Colombia', 3099000, 'COP', 3, 'https://www.falabella.com.co/falabella-co/search?Ntt=iphone+15', daysAgo(20), 'Retail', 'Colombia'),
+    mk(iphone15Key, 'iPhone 15 128GB', 'Falabella Colombia', 2879100, 'COP', 10, 'https://www.falabella.com.co/falabella-co/search?Ntt=iphone+15', daysAgo(3), 'Retail', 'Colombia'),
+    mk(iphone15Key, 'iPhone 15 128GB', 'Ktronix Colombia', 3250000, 'COP', 0, 'https://www.ktronix.com/iphone', daysAgo(42), 'Electrónica', 'Colombia'),
+    mk(iphone15Key, 'iPhone 15 128GB', 'Ktronix Colombia', 2999000, 'COP', 8, 'https://www.ktronix.com/iphone', daysAgo(12), 'Electrónica', 'Colombia'),
+    mk(iphone15Key, 'iPhone 15 128GB', 'Alkosto Colombia', 3199000, 'COP', 0, 'https://www.alkosto.com/search?text=iphone+15', daysAgo(38), 'Electrónica', 'Colombia'),
+    mk(iphone15Key, 'iPhone 15 128GB', 'Alkosto Colombia', 2849000, 'COP', 11, 'https://www.alkosto.com/search?text=iphone+15', daysAgo(8), 'Electrónica', 'Colombia'),
+  );
+
+  // ── Xiaomi Redmi Note 13 Pro+ 5G — Colombia ──────────────────────────
+  const xiaomiProKey = 'xiaomi redmi note 13 pro plus 5g colombia';
+  entries.push(
+    mk(xiaomiProKey, 'Xiaomi Redmi Note 13 Pro+ 5G 256GB', 'Alkosto Colombia', 1399000, 'COP', 0, 'https://www.alkosto.com/search?text=redmi+note+13+pro+plus', daysAgo(40), 'Electrónica', 'Colombia'),
+    mk(xiaomiProKey, 'Xiaomi Redmi Note 13 Pro+ 5G 256GB', 'Alkosto Colombia', 1199000, 'COP', 14, 'https://www.alkosto.com/search?text=redmi+note+13+pro+plus', daysAgo(18), 'Electrónica', 'Colombia'),
+    mk(xiaomiProKey, 'Xiaomi Redmi Note 13 Pro+ 5G 256GB', 'Alkosto Colombia', 999900, 'COP', 29, 'https://www.alkosto.com/search?text=redmi+note+13+pro+plus', daysAgo(4), 'Electrónica', 'Colombia'),
+    mk(xiaomiProKey, 'Xiaomi Redmi Note 13 Pro+ 5G', 'Ktronix Colombia', 1450000, 'COP', 0, 'https://www.ktronix.com/celulares', daysAgo(38), 'Electrónica', 'Colombia'),
+    mk(xiaomiProKey, 'Xiaomi Redmi Note 13 Pro+ 5G', 'Ktronix Colombia', 1099000, 'COP', 24, 'https://www.ktronix.com/celulares', daysAgo(6), 'Electrónica', 'Colombia'),
+    mk(xiaomiProKey, 'Xiaomi Redmi Note 13 Pro+ 5G', 'Jumbo Colombia', 1380000, 'COP', 1, 'https://www.tiendasjumbo.co/search?q=xiaomi', daysAgo(35), 'Supermercados', 'Colombia'),
+    mk(xiaomiProKey, 'Xiaomi Redmi Note 13 Pro+ 5G', 'Jumbo Colombia', 1049000, 'COP', 24, 'https://www.tiendasjumbo.co/search?q=xiaomi', daysAgo(5), 'Supermercados', 'Colombia'),
+  );
+
+  // ── JBL Charge 5 — Colombia ──────────────────────────────────────────
+  const jblKey = 'jbl charge 5 bluetooth';
+  entries.push(
+    mk(jblKey, 'JBL Charge 5 Bluetooth Waterproof', 'Éxito Colombia', 349900, 'COP', 0, 'https://www.exito.com/search?text=jbl+charge+5', daysAgo(42), 'Electrónica', 'Colombia'),
+    mk(jblKey, 'JBL Charge 5 Bluetooth Waterproof', 'Éxito Colombia', 299900, 'COP', 14, 'https://www.exito.com/search?text=jbl+charge+5', daysAgo(20), 'Electrónica', 'Colombia'),
+    mk(jblKey, 'JBL Charge 5 Bluetooth Waterproof', 'Éxito Colombia', 227435, 'COP', 35, 'https://www.exito.com/search?text=jbl+charge+5', daysAgo(2), 'Electrónica', 'Colombia'),
+    mk(jblKey, 'JBL Charge 5', 'Falabella Colombia', 359900, 'COP', 0, 'https://www.falabella.com.co/falabella-co/search?Ntt=jbl+charge+5', daysAgo(38), 'Retail', 'Colombia'),
+    mk(jblKey, 'JBL Charge 5', 'Falabella Colombia', 249900, 'COP', 31, 'https://www.falabella.com.co/falabella-co/search?Ntt=jbl+charge+5', daysAgo(4), 'Retail', 'Colombia'),
+    mk(jblKey, 'JBL Charge 5', 'Alkosto Colombia', 329000, 'COP', 6, 'https://www.alkosto.com/search?text=jbl+charge+5', daysAgo(30), 'Electrónica', 'Colombia'),
+  );
+
   return entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
@@ -1035,7 +1242,7 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v9',
+      name: 'ecuador-agents-store-v10',
       partialize: (state) => ({
         settings: state.settings,
         exchangeRates: state.exchangeRates,
