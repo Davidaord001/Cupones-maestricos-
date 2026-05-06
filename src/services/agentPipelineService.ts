@@ -21,6 +21,7 @@
 import { fetchExchangeRates } from './currencyService';
 import { sendTelegramMessage, buildDailyDigest } from './telegramService';
 import { scanCompany } from './agentService';
+import { startPriceRefreshCycle, stopPriceRefreshCycle } from './mlSearchService';
 import type { Discount, Company, UrlCheckResult } from '../store/types';
 
 const MS_VERIFY   = 10 * 60 * 1000;
@@ -473,6 +474,13 @@ export function startPipeline(): void {
   setTimeout(() => runScanBatch().catch(() => {}), 3000);
   setTimeout(() => runVerifyAndPurge().catch(() => {}), 9000);
 
+  // Agente Scraper — precios reales desde MercadoLibre
+  log('Agente Scraper: iniciando actualización de precios reales...', 'info');
+  startPriceRefreshCycle(
+    () => store().discounts ?? [],
+    (id: string, patch: Partial<Discount>) => store().updateDiscount(id, patch),
+  );
+
   _timers.push(setInterval(() => runVerifyAndPurge().catch(() => {}), MS_VERIFY));
   _timers.push(setInterval(() => runScanBatch().catch(() => {}), MS_SCAN));
   _timers.push(setInterval(() => runFetchExchange().catch(() => {}), MS_EXCHANGE));
@@ -481,6 +489,7 @@ export function startPipeline(): void {
 
 export function stopPipeline(): void {
   _timers.splice(0).forEach(clearInterval);
+  stopPriceRefreshCycle();
   _status.running = false;
 }
 

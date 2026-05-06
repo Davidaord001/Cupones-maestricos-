@@ -18,6 +18,7 @@ interface AppState {
   discounts: Discount[];
   addDiscount: (d: Omit<Discount, 'id' | 'detectedAt'>) => void;
   removeDiscount: (id: string) => void;
+  updateDiscount: (id: string, patch: Partial<Discount>) => void;
   clearDiscounts: () => void;
 
   // Agents
@@ -56,6 +57,7 @@ const defaultAgents: Agent[] = [
   { id: 'agent-info',     name: 'Agente Info',     role: 'Actualiza información y métricas de confianza de las empresas',     status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📊' },
   { id: 'agent-telegram', name: 'Agente Telegram', role: 'Envía notificaciones y resúmenes de descuentos por Telegram',        status: 'idle', lastRun: null, tasksCompleted: 0, icon: '📱' },
   { id: 'agent-divisa',   name: 'Agente Divisa',   role: 'Monitorea el tipo de cambio COP/USD cada 8 horas y convierte precios en tiempo real', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '💱' },
+  { id: 'agent-scraper',  name: 'Agente Scraper',  role: 'Busca precios REALES dentro de MercadoLibre Ecuador y Colombia — entra a las páginas de producto y extrae precios actualizados', status: 'idle', lastRun: null, tasksCompleted: 0, icon: '🤖' },
 ];
 
 const TODAY = new Date().toISOString();
@@ -500,9 +502,9 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
   },
   {
     id: 'r-co-02', companyId: 'c88', companyName: 'Falabella Colombia',
-    title: 'Motorola Edge 60 Fusion 5G 256GB — 61% OFF',
-    description: 'Dimensity 7300 Energy 5G 4nm, pOLED 6.67" 144Hz 1200 nits, cámara 50MP Sony LYTIA OIS, 5000mAh TurboPower 68W, IP68, Gorilla Glass 5. $899,900 COP (antes $2,299,900 COP). 0% CMR. Envío gratis.',
-    discountPercent: 61, originalPrice: 548.0, discountedPrice: 214.0,
+    title: 'Motorola Edge 60 Fusion 5G 256GB — 10% OFF',
+    description: 'Dimensity 7300 Energy 5G 4nm, pOLED 6.67" 144Hz 1200 nits, cámara 50MP Sony LYTIA OIS, 5000mAh TurboPower 68W, IP68, Gorilla Glass 5. $899,900 COP (antes $999,900 COP). 0% CMR. Envío gratis.',
+    discountPercent: 10, originalPrice: 238.0, discountedPrice: 214.0,
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 10),
     sourceUrl: 'https://www.falabella.com.co/falabella-co/product/73304155/Celular-motorola-edge-60-fusion-5G-256GB-8GB-RAM-/73304155',
     imageUrl: '/products/co-02-motorola-edge60.jpg',
@@ -620,9 +622,9 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
   },
   {
     id: 'r-co-12', companyId: 'c88', companyName: 'Falabella Colombia',
-    title: 'Sony WH-1000XM5 Noise Cancelling — 25% OFF',
-    description: '8 micrófonos + V1+QN1 ANC, 30h batería, carga 3min=60min, LDAC Hi-Res, Multipoint 2 dispositivos. $899,000 COP (antes $1,199,000 COP). CMR 0% hasta 12 cuotas.',
-    discountPercent: 25, originalPrice: 285.0, discountedPrice: 214.0,
+    title: 'Sony WH-1000XM5 Noise Cancelling — 49% OFF',
+    description: '8 micrófonos + V1+QN1 ANC, 30h batería, carga 3min=60min, LDAC Hi-Res, Multipoint 2 dispositivos. $1,149,900 COP (antes $2,249,903 COP). CMR 0% hasta 12 cuotas.',
+    discountPercent: 49, originalPrice: 536.0, discountedPrice: 274.0,
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 17),
     sourceUrl: 'https://www.falabella.com.co/falabella-co/search?Ntt=sony+wh-1000xm5',
     imageUrl: '/products/co-12-sony-xm5.jpg',
@@ -842,6 +844,10 @@ export const useAppStore = create<AppState>()(
         })),
       removeDiscount: (id: string) =>
         set((state) => ({ discounts: state.discounts.filter((d) => d.id !== id) })),
+      updateDiscount: (id: string, patch: Partial<Discount>) =>
+        set((state) => ({
+          discounts: state.discounts.map((d) => (d.id === id ? { ...d, ...patch } : d)),
+        })),
       clearDiscounts: () => set({ discounts: [] }),
 
       agents: defaultAgents,
@@ -888,7 +894,7 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v15',
+      name: 'ecuador-agents-store-v16',
       partialize: (state) => ({
         settings: state.settings,
         exchangeRates: state.exchangeRates,
