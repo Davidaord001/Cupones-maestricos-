@@ -44,6 +44,22 @@ function countryBadge(country: string) {
   return { flag, color };
 }
 
+// SVG placeholder cuando la imagen del producto no carga
+const IMG_PLACEHOLDER = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">' +
+  '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+  '<stop offset="0%" stop-color="#1a1a2e"/><stop offset="100%" stop-color="#0f3460"/>' +
+  '</linearGradient></defs>' +
+  '<rect width="400" height="300" fill="url(#g)"/>' +
+  '<text x="200" y="140" font-family="sans-serif" font-size="64" text-anchor="middle" fill="rgba(255,255,255,0.15)">🛍️</text>' +
+  '<text x="200" y="200" font-family="sans-serif" font-size="14" text-anchor="middle" fill="rgba(255,255,255,0.25)">Imagen no disponible</text>' +
+  '</svg>'
+);
+function handleImgError(e: React.SyntheticEvent<HTMLImageElement>) {
+  const img = e.currentTarget;
+  if (!img.dataset.err) { img.dataset.err = '1'; img.src = IMG_PLACEHOLDER; }
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 function getSavings(d: { discountPercent: number | null; originalPrice: number | null; discountedPrice: number | null }) {
   if (d.originalPrice && d.discountedPrice) return d.originalPrice - d.discountedPrice;
@@ -389,7 +405,7 @@ export default function ShopPage() {
                     <div key={d.id} className={`rounded-xl overflow-hidden border flex flex-col ${i === 0 ? 'bg-yellow-500/10 border-yellow-500/30' : i === 1 ? 'bg-gray-700/30 border-gray-600/30' : 'bg-amber-900/10 border-amber-700/30'}`}>
                       {d.imageUrl && (
                         <div className="bg-white flex items-center justify-center" style={{ height: '120px' }}>
-                          <img src={d.imageUrl} alt={d.title} className="object-contain w-full h-full p-2" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display='none'; }} />
+                          <img src={d.imageUrl} alt={d.title} className="object-contain w-full h-full p-2" onError={handleImgError} />
                         </div>
                       )}
                       <div className="p-4 flex flex-col gap-2 flex-1">
@@ -430,7 +446,7 @@ export default function ShopPage() {
                     <div key={d.id} className={`bg-gray-900 border rounded-xl overflow-hidden transition-all hover:border-yellow-500/40 ${d.predictedDiscount ? 'border-purple-500/30' : 'border-gray-800'}`}>
                       {d.imageUrl && (
                         <div className="relative bg-white flex items-center justify-center" style={{ height: '180px' }}>
-                          <img src={d.imageUrl} alt={d.title} className="object-contain w-full h-full p-3" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display='none'; }} />
+                          <img src={d.imageUrl} alt={d.title} className="object-contain w-full h-full p-3" onError={handleImgError} />
                           {d.discountPercent !== null && (
                             <span className={`absolute top-3 right-3 text-white text-lg font-black px-3 py-1 rounded-xl shadow-lg ${d.predictedDiscount ? 'bg-purple-600' : d.discountPercent >= 40 ? 'bg-red-600' : d.discountPercent >= 25 ? 'bg-orange-500' : 'bg-green-600'}`}>
                               -{d.discountPercent}%
@@ -550,7 +566,7 @@ export default function ShopPage() {
                           <span className="text-xl flex-shrink-0 w-7 text-center">{idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx+1}.`}</span>
                           {item.imageUrl ? (
                             <div className="w-12 h-12 bg-white rounded-lg flex-shrink-0 overflow-hidden">
-                              <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain p-1" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display='none'; }} />
+                              <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain p-1" onError={handleImgError} />
                             </div>
                           ) : (
                             <div className="w-12 h-12 bg-gray-800 rounded-lg flex-shrink-0 flex items-center justify-center text-gray-600"><ShoppingCart size={20} /></div>
@@ -612,7 +628,7 @@ export default function ShopPage() {
                 <div className="flex items-center gap-3">
                   {histSelected.imageUrl && (
                     <div className="w-12 h-12 bg-white rounded-lg overflow-hidden flex-shrink-0">
-                      <img src={histSelected.imageUrl} alt={histSelected.displayTitle} className="w-full h-full object-contain p-1" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display='none'; }} />
+                      <img src={histSelected.imageUrl} alt={histSelected.displayTitle} className="w-full h-full object-contain p-1" onError={handleImgError} />
                     </div>
                   )}
                   <div>
@@ -704,7 +720,7 @@ export default function ShopPage() {
                   <div className="flex items-start gap-3">
                     {group.imageUrl ? (
                       <div className="w-14 h-14 bg-white rounded-lg flex-shrink-0 overflow-hidden">
-                        <img src={group.imageUrl} alt={group.displayTitle} className="w-full h-full object-contain p-1" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display='none'; }} />
+                        <img src={group.imageUrl} alt={group.displayTitle} className="w-full h-full object-contain p-1" onError={handleImgError} />
                       </div>
                     ) : (
                       <div className="w-14 h-14 bg-gray-800 rounded-lg flex-shrink-0 flex items-center justify-center"><ShoppingCart size={22} className="text-gray-600" /></div>
