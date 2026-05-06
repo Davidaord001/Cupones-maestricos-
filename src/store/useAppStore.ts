@@ -17,6 +17,7 @@ interface AppState {
   // Discounts
   discounts: Discount[];
   addDiscount: (d: Omit<Discount, 'id' | 'detectedAt'>) => void;
+  removeDiscount: (id: string) => void;
   clearDiscounts: () => void;
 
   // Agents
@@ -852,16 +853,16 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
 
   // Samsung Galaxy S24 FE — Ktronix Colombia
   {
-    id: 'pre-d52', companyId: 'c99', companyName: 'Ktronix Colombia',
-    title: 'Samsung Galaxy S24 FE 128GB 8GB RAM — 20% OFF',
-    description: 'Samsung Galaxy S24 FE 128GB en Ktronix Colombia. Procesador Exynos 2500, pantalla Dynamic AMOLED 2X 6.7" 120Hz, cámara 50MP OIS, batería 4700mAh. $1,759,000 COP (~$473). Antes $2,199,000 COP. 12 meses garantía Samsung Colombia.',
-    discountPercent: 20, originalPrice: 592.01, discountedPrice: 473.61,
-    validFrom: addDays(NOW, -5), validUntil: addDays(NOW, 15),
-    sourceUrl: 'https://www.ktronix.com/smartphones/samsung/samsung-galaxy-s24-fe',
+    id: 'pre-d52', companyId: 'c91', companyName: 'Alkosto Colombia',
+    title: 'Samsung Galaxy S24 FE 256GB 5G — Precio real Alkosto Colombia',
+    description: 'Samsung Galaxy S24 FE 256GB 5G en Alkosto Colombia. Exynos 2500, Dynamic AMOLED 2X 6.7" 120Hz, cámara 50MP OIS, batería 4700mAh. $3,999,990 COP (~$1,077 USD). 0% interés con Bancos aliados. Envío gratis + Seguro Gratis incluido. 4.9★.',
+    discountPercent: 12, originalPrice: 1214.19, discountedPrice: 1076.73,
+    validFrom: addDays(NOW, -5), validUntil: addDays(NOW, 20),
+    sourceUrl: 'https://www.alkosto.com/search?text=samsung+galaxy+s24fe',
     imageUrl: 'https://m.media-amazon.com/images/I/71mv0y2f8cL._AC_SL1500_.jpg',
-    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 96, sector: 'Electrónica',
+    detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 99, sector: 'Electrónica',
     country: 'Colombia', freeShipping: true,
-    specs: ['CPU: Samsung Exynos 2500 Octa-Core', 'RAM / ROM: 8GB / 128GB', 'Pantalla: Dynamic AMOLED 2X 6.7" 120Hz, 2600 nits', 'Cámara: 50MP OIS + 8MP ultra + 10MP tele 3x', 'Batería: 4700mAh + carga 45W', 'Resistencia: IP68 inmersión 1.5m, Corning Gorilla Glass Victus+', '✅ Envío gratis a todo Colombia'],
+    specs: ['CPU: Samsung Exynos 2500 Octa-Core 4nm', 'RAM / ROM: 8GB / 256GB UFS 3.1', 'Pantalla: Dynamic AMOLED 2X 6.7" 120Hz, 2600 nits', 'Cámara: 50MP OIS + 8MP ultra + 10MP tele 3x', 'Batería: 4700mAh + carga 45W SuperFast', 'Resistencia: IP68 inmersión 1.5m, Gorilla Glass Victus+', '✅ 0% interés + Seguro Gratis + Envío Gratis Colombia'],
   },
 
   // Smart TV Hisense 55" ULED 4K — Falabella Colombia
@@ -1098,14 +1099,14 @@ function seedPriceHistory(): PriceHistoryEntry[] {
   const s24feKey = 'samsung galaxy s24 fe 128gb';
   const s24feImg = 'https://m.media-amazon.com/images/I/71mv0y2f8cL._AC_SL1500_.jpg';
   entries.push(
-    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 2199000, 'COP', 0, 'https://www.ktronix.com/smartphones/samsung', daysAgo(40), 'Electrónica', 'Colombia', s24feImg),
-    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 2099000, 'COP', 5, 'https://www.ktronix.com/smartphones/samsung', daysAgo(25), 'Electrónica', 'Colombia', s24feImg),
-    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 1899000, 'COP', 14, 'https://www.ktronix.com/smartphones/samsung', daysAgo(10), 'Electrónica', 'Colombia', s24feImg),
-    mk(s24feKey, 'Samsung Galaxy S24 FE 128GB', 'Ktronix Colombia', 1759000, 'COP', 20, 'https://www.ktronix.com/smartphones/samsung', daysAgo(2), 'Electrónica', 'Colombia', s24feImg),
-    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Falabella Colombia', 2299000, 'COP', 0, 'https://www.falabella.com.co/falabella-co/search?Ntt=samsung+s24+fe', daysAgo(42), 'Electrónica', 'Colombia'),
-    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Falabella Colombia', 1999000, 'COP', 13, 'https://www.falabella.com.co/falabella-co/search?Ntt=samsung+s24+fe', daysAgo(15), 'Electrónica', 'Colombia'),
-    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Alkosto Colombia', 2249000, 'COP', 2, 'https://www.alkosto.com/search?text=samsung+galaxy+s24+fe', daysAgo(38), 'Electrónica', 'Colombia'),
-    mk(s24feKey, 'Samsung Galaxy S24 FE', 'Alkosto Colombia', 1799000, 'COP', 18, 'https://www.alkosto.com/search?text=samsung+galaxy+s24+fe', daysAgo(5), 'Electrónica', 'Colombia'),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 256GB 5G', 'Alkosto Colombia', 4549990, 'COP', 0, 'https://www.alkosto.com/search?text=samsung+galaxy+s24fe', daysAgo(42), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 256GB 5G', 'Alkosto Colombia', 4399990, 'COP', 3, 'https://www.alkosto.com/search?text=samsung+galaxy+s24fe', daysAgo(28), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 256GB 5G', 'Alkosto Colombia', 4199990, 'COP', 8, 'https://www.alkosto.com/search?text=samsung+galaxy+s24fe', daysAgo(12), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 256GB 5G', 'Alkosto Colombia', 3999990, 'COP', 12, 'https://www.alkosto.com/search?text=samsung+galaxy+s24fe', daysAgo(2), 'Electrónica', 'Colombia', s24feImg),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 256GB', 'Falabella Colombia', 4599000, 'COP', 0, 'https://www.falabella.com.co/falabella-co/search?Ntt=samsung+s24+fe', daysAgo(40), 'Electrónica', 'Colombia'),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 256GB', 'Falabella Colombia', 4299000, 'COP', 6, 'https://www.falabella.com.co/falabella-co/search?Ntt=samsung+s24+fe', daysAgo(15), 'Electrónica', 'Colombia'),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 512GB', 'Alkosto Colombia', 4549990, 'COP', 0, 'https://www.alkosto.com/search?text=samsung+galaxy+s24fe', daysAgo(38), 'Electrónica', 'Colombia'),
+    mk(s24feKey, 'Samsung Galaxy S24 FE 512GB', 'Alkosto Colombia', 4549990, 'COP', 0, 'https://www.alkosto.com/search?text=samsung+galaxy+s24fe', daysAgo(5), 'Electrónica', 'Colombia'),
   );
 
   // ── Hisense TV 55" ULED — Colombia ───────────────────────────────────
@@ -1196,6 +1197,8 @@ export const useAppStore = create<AppState>()(
             ...state.discounts,
           ],
         })),
+      removeDiscount: (id: string) =>
+        set((state) => ({ discounts: state.discounts.filter((d) => d.id !== id) })),
       clearDiscounts: () => set({ discounts: [] }),
 
       agents: defaultAgents,
@@ -1242,7 +1245,7 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v10',
+      name: 'ecuador-agents-store-v11',
       partialize: (state) => ({
         settings: state.settings,
         exchangeRates: state.exchangeRates,

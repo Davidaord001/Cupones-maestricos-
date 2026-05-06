@@ -14,7 +14,7 @@ import { useAppStore } from './store/useAppStore';
 import { runFullScan } from './services/agentService';
 import { sendTelegramMessage, buildNewDiscountAlert } from './services/telegramService';
 import { fetchExchangeRates } from './services/currencyService';
-import { initPipeline, startPipeline, stopPipeline } from './services/agentPipelineService';
+import { initPipeline, startPipeline } from './services/agentPipelineService';
 
 const PAGES: Record<string, React.ReactNode> = {
   dashboard: <DashboardPage />,
@@ -34,7 +34,7 @@ function App() {
   const prevDiscountCount = useRef<number>(0);
   const pipelineInitRef = useRef(false);
 
-  // ─── Pipeline automático (cola de agentes + retry) ─────────────────────
+  // ─── Pipeline automático — SIEMPRE activo desde el primer render ─────────
   useEffect(() => {
     if (!pipelineInitRef.current) {
       pipelineInitRef.current = true;
@@ -43,15 +43,10 @@ function App() {
         (msg, type) => useAppStore.getState().addLog({ agentName: 'Pipeline', message: msg, type }),
       );
     }
-
-    if (settings.autoScanEnabled) {
-      startPipeline(settings.scanIntervalMinutes ?? 60);
-    } else {
-      stopPipeline();
-    }
-
-    return () => { stopPipeline(); };
-  }, [settings.autoScanEnabled, settings.scanIntervalMinutes]);
+    // Pipeline siempre activo: verificación, scan y tipo de cambio corren siempre
+    startPipeline();
+    return () => { /* no detener al desmontar — queremos que siga en segundo plano */ };
+  }, []);
 
   // ─── Tipo de cambio automático cada 8 horas ────────────────────────────
   useEffect(() => {
