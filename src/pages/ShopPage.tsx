@@ -7,7 +7,8 @@ import { useAppStore } from '../store/useAppStore';
 import {
   Tag, Clock, TrendingUp, TrendingDown, Sparkles, Trophy, ArrowUpDown,
   Star, Flame, ShoppingCart, ChevronLeft, ChevronRight, Search, X,
-  GitCompare, History, ExternalLink, BarChart2, DollarSign,
+  GitCompare, History, ExternalLink, BarChart2, DollarSign, Truck,
+  MapPin, Package,
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -475,9 +476,10 @@ export default function ShopPage() {
                         )}
 
                         <div className="flex flex-wrap gap-2">
-                          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">{d.companyName}</span>
-                          <span className="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">{d.sector}</span>
-                          {!d.imageUrl && <span className={`text-xs border px-2 py-0.5 rounded-full font-bold ${cColor}`}>{flag} {country}</span>}
+                          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full flex items-center gap-1"><Package size={10} />{d.companyName}</span>
+                          <span className="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full flex items-center gap-1"><Tag size={9} />{d.sector}</span>
+                          {!d.imageUrl && <span className={`text-xs border px-2 py-0.5 rounded-full font-bold flex items-center gap-1 ${cColor}`}><MapPin size={9} />{flag} {country}</span>}
+                          {(d as any).freeShipping && <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 font-bold"><Truck size={10} />{(d as any).shippingNote ?? 'Envío Gratis'}</span>}
                           {d.predictedDiscount && <span className="text-xs bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full"><Star size={9} className="inline mr-0.5" />{Math.round(d.confidence)}%</span>}
                         </div>
 

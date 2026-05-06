@@ -33,7 +33,9 @@ export interface Discount {
   sector: string;
   imageUrl?: string;
   specs?: string[];
-  country?: 'Ecuador' | 'Colombia';
+  country?: 'Ecuador' | 'Colombia' | 'Internacional';
+  freeShipping?: boolean;
+  shippingNote?: string;
 }
 
 export interface ExchangeRates {
