@@ -1,13 +1,11 @@
 import React from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { LayoutDashboard, Building2, Tag, BarChart3, Bot, Settings, Zap, GitCompare, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, Building2, ShoppingBag, BarChart3, Bot, Settings, Zap } from 'lucide-react';
 
 const tabs = [
   { id: 'dashboard',   label: 'Salpicadero',  icon: LayoutDashboard },
   { id: 'companies',   label: 'Empresas',      icon: Building2 },
-  { id: 'discounts',   label: 'Descuentos',    icon: Tag },
-  { id: 'comparator',  label: 'Comparador',    icon: GitCompare },
-  { id: 'historial',   label: 'Historial',     icon: TrendingUp },
+  { id: 'shop',        label: 'Tiendas',       icon: ShoppingBag },
   { id: 'analytics',   label: 'Análisis',      icon: BarChart3 },
   { id: 'agents',      label: 'Agentes',       icon: Bot },
   { id: 'settings',    label: 'Configuración', icon: Settings },
