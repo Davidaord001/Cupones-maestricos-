@@ -46,7 +46,16 @@ function toUSD(price: number, currency: 'USD' | 'COP', rate: number): number {
 }
 
 export default function PriceHistoryPage() {
-  const { priceHistory, exchangeRates } = useAppStore();
+  const { priceHistory, exchangeRates, urlChecks } = useAppStore();
+
+  // Devuelve la mejor URL: usa alternativa verificada si el link directo está roto
+  function getBuyUrl(sourceUrl: string): { url: string; isFallback: boolean } {
+    const check = urlChecks[sourceUrl];
+    if (check?.status === 'broken' && check?.alternativeUrl) {
+      return { url: check.alternativeUrl, isFallback: true };
+    }
+    return { url: sourceUrl, isFallback: false };
+  }
   const [search, setSearch] = useState('');
   const [sectorFilter, setSectorFilter] = useState('Todos');
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -275,6 +284,7 @@ export default function PriceHistoryPage() {
                 .map(({ store, latest }, idx) => {
                   const usd = toUSD(latest.price, latest.currency, exchangeRates.USD_COP);
                   const isBest = idx === 0 && selected.stores.length > 1;
+                  const { url: buyUrl, isFallback } = getBuyUrl(latest.sourceUrl);
                   return (
                     <div key={store} className={`flex items-center justify-between px-4 py-3 rounded-lg ${isBest ? 'bg-green-500/10 border border-green-500/20' : 'bg-gray-800/60'}`}>
                       <div className="flex items-center gap-3">
@@ -296,10 +306,10 @@ export default function PriceHistoryPage() {
                             <p className="text-gray-500 text-xs">≈ ${usd.toFixed(0)} USD</p>
                           )}
                         </div>
-                        <a href={latest.sourceUrl} target="_blank" rel="noopener noreferrer"
+                        <a href={buyUrl} target="_blank" rel="noopener noreferrer"
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${isBest ? 'bg-green-500 hover:bg-green-400 text-white' : 'bg-gray-700 hover:bg-gray-600 text-gray-300'}`}>
                           <ExternalLink size={11} />
-                          Ir a comprar
+                          {isFallback ? 'Buscar' : 'Ir a comprar'}
                         </a>
                       </div>
                     </div>

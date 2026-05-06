@@ -61,6 +61,7 @@ export interface UrlCheckResult {
   status: 'ok' | 'broken' | 'unknown';
   checkedAt: string;
   note?: string;
+  alternativeUrl?: string;  // URL de búsqueda usada cuando status === 'broken'
 }
 
 export interface AgentLog {

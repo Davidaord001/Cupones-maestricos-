@@ -24,7 +24,16 @@ function getSavings(d: { discountPercent: number | null; originalPrice: number |
 }
 
 export default function DiscountsPage() {
-  const { discounts, exchangeRates } = useAppStore();
+  const { discounts, exchangeRates, urlChecks } = useAppStore();
+
+  // Devuelve la mejor URL disponible: usa alternativa verificada si el link directo está roto
+  function getBuyUrl(sourceUrl: string): { url: string; isFallback: boolean } {
+    const check = urlChecks[sourceUrl];
+    if (check?.status === 'broken' && check?.alternativeUrl) {
+      return { url: check.alternativeUrl, isFallback: true };
+    }
+    return { url: sourceUrl, isFallback: false };
+  }
   const [typeFilter, setTypeFilter] = useState<'all' | 'real' | 'predicted'>('all');
   const [sectorFilter, setSectorFilter] = useState('Todos');
   const [countryFilter, setCountryFilter] = useState('Todos');
@@ -162,9 +171,10 @@ export default function DiscountsPage() {
                       </span>
                     </div>
                   )}
-                  <a href={d.sourceUrl} target="_blank" rel="noopener noreferrer"
+                  <a href={getBuyUrl(d.sourceUrl).url} target="_blank" rel="noopener noreferrer"
                     className="mt-auto text-xs flex items-center gap-1 bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-bold px-3 py-1.5 rounded-lg transition-colors justify-center">
-                    <ShoppingCart size={11} /> Ir a comprar →
+                    <ShoppingCart size={11} />
+                    {getBuyUrl(d.sourceUrl).isFallback ? 'Buscar →' : 'Ir a comprar →'}
                   </a>
                 </div>
               </div>
@@ -383,9 +393,10 @@ export default function DiscountsPage() {
                         Vence: {format(new Date(d.validUntil), 'dd/MM/yyyy')}
                       </span>
                     )}
-                    <a href={d.sourceUrl} target="_blank" rel="noopener noreferrer"
+                    <a href={getBuyUrl(d.sourceUrl).url} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-1.5 bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-bold px-3 py-1.5 rounded-lg transition-colors text-xs">
-                      <ShoppingCart size={12} /> Ir a comprar
+                      <ShoppingCart size={12} />
+                      {getBuyUrl(d.sourceUrl).isFallback ? 'Buscar' : 'Ir a comprar'}
                     </a>
                   </div>
                 </div>

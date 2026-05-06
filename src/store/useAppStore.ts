@@ -717,7 +717,7 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     description: 'TV QLED 55 pulgadas, 4K, Quantum Processor Lite, Smart TV Tizen con apps Samsung. Precio: $449 (antes $599). Financiamiento hasta 24 meses sin intereses con Banco Pichincha.',
     discountPercent: 25, originalPrice: 599, discountedPrice: 449,
     validFrom: addDays(NOW, -2), validUntil: addDays(NOW, 18),
-    sourceUrl: 'https://www.samsung.com/latin/televisions-audio-video/qled-tv/55-q60d-qled-4k-smart-tv-2024-qa55q60dauxpe/',
+    sourceUrl: 'https://www.samsung.com/latin/televisions-audio-video/all-televisions/',
     imageUrl: 'https://images.samsung.com/is/image/samsung/p6pim/latin/qa55q60dauxpe/gallery/latin-qled-55-q60d-qa55q60dauxpe-541196046?$650_519_PNG$',
     detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 95, sector: 'Electrónica',
     specs: ['Pantalla: 55" QLED 4K 3840×2160', 'Procesador: Quantum Processor Lite 4K', 'HDR: Quantum HDR / HDR10+', 'Smart TV: Tizen, apps integradas', 'Conectividad: Wi-Fi, Bluetooth 5.2, 3×HDMI, 1×USB', 'Sonido: 20W Dolby Atmos'],
@@ -783,7 +783,7 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
     description: 'HP Victus 15-fa1020la: Intel Core i5-12450H, 16GB RAM DDR5, 512GB SSD NVMe, NVIDIA RTX 2050 4GB GDDR6, pantalla 15.6" FHD IPS 144Hz. $799 (antes $999).',
     discountPercent: 20, originalPrice: 999, discountedPrice: 799,
     validFrom: addDays(NOW, -4), validUntil: addDays(NOW, 10),
-    sourceUrl: 'https://www.hp.com/ec-es/shop/pdp/hp-victus-15-fa1020la',
+    sourceUrl: 'https://www.laganga.com/buscar?q=hp+victus+gaming',
     imageUrl: 'https://ssl-product-images.www8-hp.com/digmedialib/prodimg/knowledgebase/c08285892.png',
     detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 90, sector: 'Electrónica',
     specs: ['CPU: Intel Core i5-12450H (8 núcleos, 4.4GHz turbo)', 'GPU: NVIDIA GeForce RTX 2050 4GB GDDR6', 'RAM: 16GB DDR5 4800MHz', 'Almacenamiento: 512GB SSD NVMe PCIe 4.0', 'Pantalla: 15.6" FHD IPS 1920×1080 144Hz', 'SO: Windows 11 Home incluido'],
@@ -860,17 +860,17 @@ function seedPriceHistory(): PriceHistoryEntry[] {
   const tvKey = 'smart tv 55 samsung qled';
   const tvImg = 'https://images.samsung.com/is/image/samsung/p6pim/latin/qa55q60dauxpe/gallery/latin-qled-55-q60d-qa55q60dauxpe-541196046?$650_519_PNG$';
   entries.push(
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 599, 'USD', 0, 'https://www.samsung.com/ec/televisions/', daysAgo(45), 'Electrónica', 'Ecuador', tvImg),
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 599, 'USD', 0, 'https://www.samsung.com/ec/televisions/', daysAgo(38), 'Electrónica', 'Ecuador', tvImg),
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 549, 'USD', 8, 'https://www.samsung.com/ec/televisions/', daysAgo(30), 'Electrónica', 'Ecuador', tvImg),
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 499, 'USD', 17, 'https://www.samsung.com/ec/televisions/', daysAgo(20), 'Electrónica', 'Ecuador', tvImg),
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 449, 'USD', 25, 'https://www.samsung.com/ec/televisions/', daysAgo(5), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 599, 'USD', 0, 'https://www.samsung.com/latin/televisions-audio-video/all-televisions/', daysAgo(45), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 599, 'USD', 0, 'https://www.samsung.com/latin/televisions-audio-video/all-televisions/', daysAgo(38), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 549, 'USD', 8, 'https://www.samsung.com/latin/televisions-audio-video/all-televisions/', daysAgo(30), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 499, 'USD', 17, 'https://www.samsung.com/latin/televisions-audio-video/all-televisions/', daysAgo(20), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 449, 'USD', 25, 'https://www.samsung.com/latin/televisions-audio-video/all-televisions/', daysAgo(5), 'Electrónica', 'Ecuador', tvImg),
     mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'Comandato Ecuador', 580, 'USD', 3, 'https://www.comandato.com/televisores', daysAgo(45), 'Electrónica', 'Ecuador'),
     mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'Comandato Ecuador', 550, 'USD', 8, 'https://www.comandato.com/televisores', daysAgo(28), 'Electrónica', 'Ecuador'),
     mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'Comandato Ecuador', 529, 'USD', 12, 'https://www.comandato.com/televisores', daysAgo(10), 'Electrónica', 'Ecuador'),
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 589, 'USD', 2, 'https://www.laganga.com/televisores', daysAgo(45), 'Electrónica', 'Ecuador'),
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 565, 'USD', 6, 'https://www.laganga.com/televisores', daysAgo(22), 'Electrónica', 'Ecuador'),
-    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 469, 'USD', 22, 'https://www.laganga.com/televisores', daysAgo(4), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 589, 'USD', 2, 'https://www.laganga.com/buscar?q=smart+tv+55', daysAgo(45), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 565, 'USD', 6, 'https://www.laganga.com/buscar?q=smart+tv+55', daysAgo(22), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 469, 'USD', 22, 'https://www.laganga.com/buscar?q=smart+tv+55', daysAgo(4), 'Electrónica', 'Ecuador'),
   );
 
   // ── Smart TV TCL 50" ──────────────────────────────────────────────────
@@ -906,14 +906,14 @@ function seedPriceHistory(): PriceHistoryEntry[] {
   const laptopKey = 'laptop hp victus 15 gaming';
   const laptopImg = 'https://ssl-product-images.www8-hp.com/digmedialib/prodimg/knowledgebase/c08285892.png';
   entries.push(
-    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 999, 'USD', 0, 'https://www.laganga.com/laptops', daysAgo(42), 'Electrónica', 'Ecuador', laptopImg),
-    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 949, 'USD', 5, 'https://www.laganga.com/laptops', daysAgo(25), 'Electrónica', 'Ecuador', laptopImg),
-    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 799, 'USD', 20, 'https://www.laganga.com/laptops', daysAgo(4), 'Electrónica', 'Ecuador', laptopImg),
-    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 999, 'USD', 0, 'https://www.hp.com/ec-es/laptops/', daysAgo(42), 'Electrónica', 'Ecuador'),
-    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 899, 'USD', 10, 'https://www.hp.com/ec-es/laptops/', daysAgo(18), 'Electrónica', 'Ecuador'),
-    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 849, 'USD', 15, 'https://www.hp.com/ec-es/laptops/', daysAgo(3), 'Electrónica', 'Ecuador'),
-    mk(laptopKey, 'HP Victus 15 Gaming', 'Tecnomega Ecuador', 989, 'USD', 1, 'https://www.tecnomega.com.ec/laptops', daysAgo(38), 'Electrónica', 'Ecuador'),
-    mk(laptopKey, 'HP Victus 15 Gaming', 'Tecnomega Ecuador', 820, 'USD', 18, 'https://www.tecnomega.com.ec/laptops', daysAgo(6), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 999, 'USD', 0, 'https://www.laganga.com/buscar?q=laptop+gaming+hp', daysAgo(42), 'Electrónica', 'Ecuador', laptopImg),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 949, 'USD', 5, 'https://www.laganga.com/buscar?q=laptop+gaming+hp', daysAgo(25), 'Electrónica', 'Ecuador', laptopImg),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 799, 'USD', 20, 'https://www.laganga.com/buscar?q=laptop+gaming+hp', daysAgo(4), 'Electrónica', 'Ecuador', laptopImg),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 999, 'USD', 0, 'https://www.hp.com/ec-es/laptops/gaming/', daysAgo(42), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 899, 'USD', 10, 'https://www.hp.com/ec-es/laptops/gaming/', daysAgo(18), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 849, 'USD', 15, 'https://www.hp.com/ec-es/laptops/gaming/', daysAgo(3), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'HP Victus 15 Gaming', 'Tecnomega Ecuador', 989, 'USD', 1, 'https://www.tecnomega.com.ec/buscar?q=hp+victus+gaming', daysAgo(38), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'HP Victus 15 Gaming', 'Tecnomega Ecuador', 820, 'USD', 18, 'https://www.tecnomega.com.ec/buscar?q=hp+victus+gaming', daysAgo(6), 'Electrónica', 'Ecuador'),
   );
 
   // ── Motorola Edge 60 Fusion Colombia ─────────────────────────────────

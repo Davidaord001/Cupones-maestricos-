@@ -483,7 +483,7 @@ export async function runLinkVerifierAgent(
         broken++;
         const fallback = buildProductUrl(new URL(url).origin, d.title);
         onLog(`❌ Link roto: ${d.companyName} — ${d.title.slice(0, 40)}…`, 'warning');
-        onUrlChecked(url, { url, status: 'broken', checkedAt: now, note: `HTTP ${resp.status} — búsqueda alternativa: ${fallback}` });
+        onUrlChecked(url, { url, status: 'broken', checkedAt: now, alternativeUrl: fallback, note: `HTTP ${resp.status}` });
       } else {
         const data = await resp.json() as { status?: { http_code: number }; contents?: string };
         const httpCode = data?.status?.http_code ?? 0;
@@ -498,13 +498,13 @@ export async function runLinkVerifierAgent(
           broken++;
           const fallback = buildProductUrl(new URL(url).origin, d.title);
           onLog(`❌ Link no encontrado (${httpCode}): ${d.title.slice(0, 40)}`, 'warning');
-          onUrlChecked(url, { url, status: 'broken', checkedAt: now, note: `HTTP ${httpCode} — búsqueda alternativa: ${fallback}` });
+          onUrlChecked(url, { url, status: 'broken', checkedAt: now, alternativeUrl: fallback, note: `HTTP ${httpCode}` });
         }
       }
     } catch {
       unknown++;
       onLog(`⚠ No se pudo verificar: ${d.companyName} — ${d.title.slice(0, 35)}`, 'warning');
-      onUrlChecked(url, { url, status: 'unknown', checkedAt: now, note: 'Tiempo de espera agotado o error de red' });
+      onUrlChecked(url, { url, status: 'unknown', checkedAt: now, note: 'Error de red o tiempo de espera' });
     }
   }
 
