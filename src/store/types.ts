@@ -41,6 +41,28 @@ export interface ExchangeRates {
   lastUpdated: string;
 }
 
+export interface PriceHistoryEntry {
+  id: string;
+  productKey: string;       // clave normalizada para agrupar (ej: "samsung tv 55")
+  productTitle: string;
+  store: string;
+  price: number;
+  currency: 'USD' | 'COP';
+  discountPercent: number | null;
+  sourceUrl: string;
+  imageUrl?: string;
+  date: string;             // ISO string del momento de registro
+  sector: string;
+  country: string;
+}
+
+export interface UrlCheckResult {
+  url: string;
+  status: 'ok' | 'broken' | 'unknown';
+  checkedAt: string;
+  note?: string;
+}
+
 export interface AgentLog {
   id: string;
   agentName: string;

@@ -1,4 +1,4 @@
-import type { Company, Discount } from '../store/types';
+import type { Company, Discount, PriceHistoryEntry, UrlCheckResult } from '../store/types';
 import { analyzeCompanyDiscounts, predictNextDiscountDate, groqUsage } from './groqService';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -396,4 +396,123 @@ export async function runInfoAgent(
   if (inactive > 0) onLog(`⚠ ${inactive} empresas sin escaneo en las últimas 48 horas`, 'warning');
   onLog(`📈 Sector más monitoreado: ${topSector[0]} con ${topSector[1]} empresas`, 'info');
   onLog(`🏆 Score promedio de confianza: ${Math.round(active.reduce((s, c) => s + c.trustScore, 0) / active.length)}%`, 'success');
+}
+
+// ─── Agente Historial de Precios ──────────────────────────────────────────
+/**
+ * Registra los precios actuales de todos los descuentos activos como
+ * entradas de historial para construir el tracking de precios.
+ */
+export async function runPriceHistoryAgent(
+  discounts: Discount[],
+  onLog: (msg: string, type?: 'info' | 'success' | 'warning' | 'error') => void,
+): Promise<PriceHistoryEntry[]> {
+  const entries: PriceHistoryEntry[] = [];
+  const now = new Date().toISOString();
+  let seq = 0;
+
+  onLog('📈 Iniciando registro de precios actuales…', 'info');
+  const active = discounts.filter((d) => (d.discountedPrice ?? d.originalPrice ?? 0) > 0);
+  onLog(`🔍 ${active.length} productos activos encontrados`, 'info');
+
+  for (const d of active) {
+    await delay(20);
+    const price = d.discountedPrice ?? d.originalPrice ?? 0;
+    const key = d.title
+      .toLowerCase()
+      .replace(/[^a-záéíóúñ0-9 ]/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .split(' ')
+      .slice(0, 5)
+      .join(' ');
+
+    entries.push({
+      id: `ph-live-${++seq}-${Date.now()}`,
+      productKey: key,
+      productTitle: d.title,
+      store: d.companyName,
+      price,
+      currency: d.currency ?? 'USD',
+      discountPercent: d.discountPercent ?? null,
+      sourceUrl: d.sourceUrl,
+      imageUrl: d.imageUrl,
+      date: now,
+      sector: d.sector ?? 'General',
+      country: d.country ?? 'Ecuador',
+    });
+  }
+
+  onLog(`✅ ${entries.length} precios registrados correctamente`, 'success');
+
+  // Agrupar por productKey para logging
+  const keys = new Set(entries.map((e) => e.productKey));
+  onLog(`📊 ${keys.size} productos únicos en historial`, 'info');
+
+  return entries;
+}
+
+// ─── Agente Verificador de Links ──────────────────────────────────────────
+/**
+ * Verifica que los enlaces "Ir a comprar" sean accesibles.
+ * Usa allorigins.win como proxy CORS-free para verificar cada URL.
+ * Para links rotos, genera URL de búsqueda alternativa.
+ */
+export async function runLinkVerifierAgent(
+  discounts: Discount[],
+  onLog: (msg: string, type?: 'info' | 'success' | 'warning' | 'error') => void,
+  onUrlChecked: (url: string, result: UrlCheckResult) => void,
+): Promise<{ ok: number; broken: number; unknown: number }> {
+  const active = discounts.filter((d) => !!d.sourceUrl);
+  onLog(`🔗 Verificando ${active.length} enlaces de productos…`, 'info');
+
+  let ok = 0;
+  let broken = 0;
+  let unknown = 0;
+
+  for (const d of active) {
+    await delay(300 + Math.random() * 200); // evitar rate-limiting
+    const url = d.sourceUrl;
+    const now = new Date().toISOString();
+
+    try {
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`;
+      const resp = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+
+      if (!resp.ok) {
+        broken++;
+        const fallback = buildProductUrl(new URL(url).origin, d.title);
+        onLog(`❌ Link roto: ${d.companyName} — ${d.title.slice(0, 40)}…`, 'warning');
+        onUrlChecked(url, { url, status: 'broken', checkedAt: now, note: `HTTP ${resp.status} — búsqueda alternativa: ${fallback}` });
+      } else {
+        const data = await resp.json() as { status?: { http_code: number }; contents?: string };
+        const httpCode = data?.status?.http_code ?? 0;
+        if (httpCode >= 200 && httpCode < 400) {
+          ok++;
+          onUrlChecked(url, { url, status: 'ok', checkedAt: now });
+        } else if (httpCode === 0 || httpCode >= 500) {
+          unknown++;
+          onLog(`⚠ Link inaccesible (${httpCode}): ${d.companyName} — ${d.title.slice(0, 35)}`, 'warning');
+          onUrlChecked(url, { url, status: 'unknown', checkedAt: now, note: `HTTP ${httpCode}` });
+        } else {
+          broken++;
+          const fallback = buildProductUrl(new URL(url).origin, d.title);
+          onLog(`❌ Link no encontrado (${httpCode}): ${d.title.slice(0, 40)}`, 'warning');
+          onUrlChecked(url, { url, status: 'broken', checkedAt: now, note: `HTTP ${httpCode} — búsqueda alternativa: ${fallback}` });
+        }
+      }
+    } catch {
+      unknown++;
+      onLog(`⚠ No se pudo verificar: ${d.companyName} — ${d.title.slice(0, 35)}`, 'warning');
+      onUrlChecked(url, { url, status: 'unknown', checkedAt: now, note: 'Tiempo de espera agotado o error de red' });
+    }
+  }
+
+  const total = ok + broken + unknown;
+  onLog(`✅ Verificación completa: ${ok}/${total} enlaces OK, ${broken} rotos, ${unknown} desconocidos`, ok > broken ? 'success' : 'warning');
+  if (broken > 0) {
+    onLog(`💡 Los enlaces rotos tienen una búsqueda alternativa generada automáticamente`, 'info');
+  }
+
+  return { ok, broken, unknown };
 }

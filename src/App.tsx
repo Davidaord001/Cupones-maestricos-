@@ -8,6 +8,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import AgentsPage from './pages/AgentsPage';
 import SettingsPage from './pages/SettingsPage';
 import ComparatorPage from './pages/ComparatorPage';
+import PriceHistoryPage from './pages/PriceHistoryPage';
 import { useAppStore } from './store/useAppStore';
 import { runFullScan } from './services/agentService';
 import { sendTelegramMessage, buildNewDiscountAlert } from './services/telegramService';
@@ -18,6 +19,7 @@ const PAGES: Record<string, React.ReactNode> = {
   companies: <CompaniesPage />,
   discounts: <DiscountsPage />,
   comparator: <ComparatorPage />,
+  historial: <PriceHistoryPage />,
   analytics: <AnalyticsPage />,
   agents: <AgentsPage />,
   settings: <SettingsPage />,

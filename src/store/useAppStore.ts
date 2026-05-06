@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Company, Discount, Agent, AgentLog, AppSettings, ExchangeRates } from './types';
+import type { Company, Discount, Agent, AgentLog, AppSettings, ExchangeRates, PriceHistoryEntry, UrlCheckResult } from './types';
 import { format } from 'date-fns';
 
 interface AppState {
@@ -32,6 +32,15 @@ interface AppState {
   // Exchange rates
   exchangeRates: ExchangeRates;
   updateExchangeRates: (r: ExchangeRates) => void;
+
+  // Price history
+  priceHistory: PriceHistoryEntry[];
+  addPriceHistoryEntries: (entries: PriceHistoryEntry[]) => void;
+  clearPriceHistory: () => void;
+
+  // URL check cache
+  urlChecks: Record<string, UrlCheckResult>;
+  updateUrlCheck: (url: string, result: UrlCheckResult) => void;
 
   // UI
   isScanning: boolean;
@@ -827,6 +836,114 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
   },
 ];
 
+// ── Historial de precios inicial (seed de 45 días) ───────────────────────
+function daysAgo(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+}
+
+function seedPriceHistory(): PriceHistoryEntry[] {
+  const entries: PriceHistoryEntry[] = [];
+  let seq = 0;
+  const mk = (
+    productKey: string, productTitle: string, store: string,
+    price: number, currency: 'USD' | 'COP', discountPercent: number | null,
+    sourceUrl: string, date: string, sector: string, country: string, imageUrl?: string
+  ): PriceHistoryEntry => ({
+    id: `ph-${++seq}`,
+    productKey, productTitle, store, price, currency,
+    discountPercent, sourceUrl, date, sector, country, imageUrl,
+  });
+
+  // ── Smart TV 55" Samsung ──────────────────────────────────────────────
+  const tvKey = 'smart tv 55 samsung qled';
+  const tvImg = 'https://images.samsung.com/is/image/samsung/p6pim/latin/qa55q60dauxpe/gallery/latin-qled-55-q60d-qa55q60dauxpe-541196046?$650_519_PNG$';
+  entries.push(
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 599, 'USD', 0, 'https://www.samsung.com/ec/televisions/', daysAgo(45), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 599, 'USD', 0, 'https://www.samsung.com/ec/televisions/', daysAgo(38), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 549, 'USD', 8, 'https://www.samsung.com/ec/televisions/', daysAgo(30), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 499, 'USD', 17, 'https://www.samsung.com/ec/televisions/', daysAgo(20), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K Q60D', 'Samsung Ecuador', 449, 'USD', 25, 'https://www.samsung.com/ec/televisions/', daysAgo(5), 'Electrónica', 'Ecuador', tvImg),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'Comandato Ecuador', 580, 'USD', 3, 'https://www.comandato.com/televisores', daysAgo(45), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'Comandato Ecuador', 550, 'USD', 8, 'https://www.comandato.com/televisores', daysAgo(28), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'Comandato Ecuador', 529, 'USD', 12, 'https://www.comandato.com/televisores', daysAgo(10), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 589, 'USD', 2, 'https://www.laganga.com/televisores', daysAgo(45), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 565, 'USD', 6, 'https://www.laganga.com/televisores', daysAgo(22), 'Electrónica', 'Ecuador'),
+    mk(tvKey, 'Smart TV Samsung 55" QLED 4K', 'La Ganga Ecuador', 469, 'USD', 22, 'https://www.laganga.com/televisores', daysAgo(4), 'Electrónica', 'Ecuador'),
+  );
+
+  // ── Smart TV TCL 50" ──────────────────────────────────────────────────
+  const tclKey = 'smart tv 50 tcl 4k android';
+  const tclImg = 'https://www.tcl.com/content/dam/tcl/product-images/televisions/2022/P735/p735_1.png';
+  entries.push(
+    mk(tclKey, 'TCL Smart TV 50" 4K Android TV P735', 'TCL Ecuador', 499, 'USD', 0, 'https://www.tcl.com/ec/es/televisions/', daysAgo(45), 'Electrónica', 'Ecuador', tclImg),
+    mk(tclKey, 'TCL Smart TV 50" 4K Android TV P735', 'TCL Ecuador', 499, 'USD', 0, 'https://www.tcl.com/ec/es/televisions/', daysAgo(35), 'Electrónica', 'Ecuador', tclImg),
+    mk(tclKey, 'TCL Smart TV 50" 4K Android TV P735', 'TCL Ecuador', 449, 'USD', 10, 'https://www.tcl.com/ec/es/televisions/', daysAgo(20), 'Electrónica', 'Ecuador', tclImg),
+    mk(tclKey, 'TCL Smart TV 50" 4K Android TV P735', 'TCL Ecuador', 359, 'USD', 28, 'https://www.tcl.com/ec/es/televisions/', daysAgo(2), 'Electrónica', 'Ecuador', tclImg),
+    mk(tclKey, 'TCL Smart TV 50" 4K', 'Tecnomega Ecuador', 490, 'USD', 2, 'https://www.tecnomega.com.ec/televisores', daysAgo(40), 'Electrónica', 'Ecuador'),
+    mk(tclKey, 'TCL Smart TV 50" 4K', 'Tecnomega Ecuador', 460, 'USD', 8, 'https://www.tecnomega.com.ec/televisores', daysAgo(18), 'Electrónica', 'Ecuador'),
+    mk(tclKey, 'TCL Smart TV 50" 4K', 'Tecnomega Ecuador', 379, 'USD', 24, 'https://www.tecnomega.com.ec/televisores', daysAgo(3), 'Electrónica', 'Ecuador'),
+    mk(tclKey, 'TCL Smart TV 50" 4K', 'MercadoLibre Ecuador', 480, 'USD', 4, 'https://www.mercadolibre.com.ec/televisores', daysAgo(38), 'Electrónica', 'Ecuador'),
+    mk(tclKey, 'TCL Smart TV 50" 4K', 'MercadoLibre Ecuador', 399, 'USD', 20, 'https://www.mercadolibre.com.ec/televisores', daysAgo(8), 'Electrónica', 'Ecuador'),
+  );
+
+  // ── Xiaomi Redmi Note 13 Pro 5G ───────────────────────────────────────
+  const xiaomiKey = 'xiaomi redmi note 13 pro 5g';
+  const xiaomiImg = 'https://i01.appmifile.com/webfile/globalimg/products/pc/redmi-note-13-pro-5g/pdp-1-1.jpg';
+  entries.push(
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G 256GB', 'Xiaomi Ecuador', 399, 'USD', 0, 'https://www.mi.com/ec/product/redmi-note-13-pro-5g', daysAgo(44), 'Electrónica', 'Ecuador', xiaomiImg),
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G 256GB', 'Xiaomi Ecuador', 399, 'USD', 0, 'https://www.mi.com/ec/product/redmi-note-13-pro-5g', daysAgo(30), 'Electrónica', 'Ecuador', xiaomiImg),
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G 256GB', 'Xiaomi Ecuador', 349, 'USD', 13, 'https://www.mi.com/ec/product/redmi-note-13-pro-5g', daysAgo(15), 'Electrónica', 'Ecuador', xiaomiImg),
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G 256GB', 'Xiaomi Ecuador', 279, 'USD', 30, 'https://www.mi.com/ec/product/redmi-note-13-pro-5g', daysAgo(3), 'Electrónica', 'Ecuador', xiaomiImg),
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G', 'MercadoLibre Ecuador', 380, 'USD', 5, 'https://listado.mercadolibre.com.ec/xiaomi-redmi-note-13-pro', daysAgo(40), 'Electrónica', 'Ecuador'),
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G', 'MercadoLibre Ecuador', 299, 'USD', 25, 'https://listado.mercadolibre.com.ec/xiaomi-redmi-note-13-pro', daysAgo(7), 'Electrónica', 'Ecuador'),
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G', 'Tecnomega Ecuador', 389, 'USD', 3, 'https://www.tecnomega.com.ec/smartphones', daysAgo(35), 'Electrónica', 'Ecuador'),
+    mk(xiaomiKey, 'Xiaomi Redmi Note 13 Pro 5G', 'Tecnomega Ecuador', 310, 'USD', 22, 'https://www.tecnomega.com.ec/smartphones', daysAgo(5), 'Electrónica', 'Ecuador'),
+  );
+
+  // ── Laptop HP Victus 15 Gaming ────────────────────────────────────────
+  const laptopKey = 'laptop hp victus 15 gaming';
+  const laptopImg = 'https://ssl-product-images.www8-hp.com/digmedialib/prodimg/knowledgebase/c08285892.png';
+  entries.push(
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 999, 'USD', 0, 'https://www.laganga.com/laptops', daysAgo(42), 'Electrónica', 'Ecuador', laptopImg),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 949, 'USD', 5, 'https://www.laganga.com/laptops', daysAgo(25), 'Electrónica', 'Ecuador', laptopImg),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5 RTX 2050', 'La Ganga Ecuador', 799, 'USD', 20, 'https://www.laganga.com/laptops', daysAgo(4), 'Electrónica', 'Ecuador', laptopImg),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 999, 'USD', 0, 'https://www.hp.com/ec-es/laptops/', daysAgo(42), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 899, 'USD', 10, 'https://www.hp.com/ec-es/laptops/', daysAgo(18), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'Laptop HP Victus 15 Gaming i5', 'HP Ecuador', 849, 'USD', 15, 'https://www.hp.com/ec-es/laptops/', daysAgo(3), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'HP Victus 15 Gaming', 'Tecnomega Ecuador', 989, 'USD', 1, 'https://www.tecnomega.com.ec/laptops', daysAgo(38), 'Electrónica', 'Ecuador'),
+    mk(laptopKey, 'HP Victus 15 Gaming', 'Tecnomega Ecuador', 820, 'USD', 18, 'https://www.tecnomega.com.ec/laptops', daysAgo(6), 'Electrónica', 'Ecuador'),
+  );
+
+  // ── Motorola Edge 60 Fusion Colombia ─────────────────────────────────
+  const motoKey = 'motorola edge 60 fusion 5g';
+  const motoImg = 'https://motorola.com/content/dam/motorola/new-catalog/motorola-edge-60-fusion/motorola-edge-60-fusion-front.png';
+  entries.push(
+    mk(motoKey, 'Motorola Edge 60 Fusion 5G 256GB', 'Falabella Colombia', 2299900, 'COP', 0, 'https://www.falabella.com.co/falabella-co/search?Ntt=motorola+edge+60', daysAgo(40), 'Retail', 'Colombia', motoImg),
+    mk(motoKey, 'Motorola Edge 60 Fusion 5G 256GB', 'Falabella Colombia', 1999900, 'COP', 13, 'https://www.falabella.com.co/falabella-co/search?Ntt=motorola+edge+60', daysAgo(22), 'Retail', 'Colombia', motoImg),
+    mk(motoKey, 'Motorola Edge 60 Fusion 5G 256GB', 'Falabella Colombia', 1499900, 'COP', 35, 'https://www.falabella.com.co/falabella-co/search?Ntt=motorola+edge+60', daysAgo(10), 'Retail', 'Colombia', motoImg),
+    mk(motoKey, 'Motorola Edge 60 Fusion 5G 256GB', 'Falabella Colombia', 949900, 'COP', 59, 'https://www.falabella.com.co/falabella-co/search?Ntt=motorola+edge+60', daysAgo(3), 'Retail', 'Colombia', motoImg),
+    mk(motoKey, 'Motorola Edge 60 Fusion 5G', 'Alkosto Colombia', 2199000, 'COP', 4, 'https://www.alkosto.com/search?text=motorola+edge+60+fusion', daysAgo(38), 'Electrónica', 'Colombia'),
+    mk(motoKey, 'Motorola Edge 60 Fusion 5G', 'Alkosto Colombia', 1299000, 'COP', 41, 'https://www.alkosto.com/search?text=motorola+edge+60+fusion', daysAgo(8), 'Electrónica', 'Colombia'),
+  );
+
+  // ── Sony WH-1000XM5 Auriculares ───────────────────────────────────────
+  const sonyKey = 'sony wh-1000xm5 auriculares';
+  const sonyImg = 'https://www.sony.com/image/5d02da5df552836db894cead731a2f83?fmt=pjpeg&wid=660&bgcolor=FFFFFF&bgc=FFFFFF';
+  entries.push(
+    mk(sonyKey, 'Sony WH-1000XM5 Auriculares Noise Cancelling', 'Sony Ecuador', 399, 'USD', 0, 'https://www.sony.com/es_ec/headphones/', daysAgo(45), 'Electrónica', 'Ecuador', sonyImg),
+    mk(sonyKey, 'Sony WH-1000XM5 Auriculares Noise Cancelling', 'Sony Ecuador', 349, 'USD', 13, 'https://www.sony.com/es_ec/headphones/', daysAgo(25), 'Electrónica', 'Ecuador', sonyImg),
+    mk(sonyKey, 'Sony WH-1000XM5 Auriculares Noise Cancelling', 'Sony Ecuador', 299, 'USD', 25, 'https://www.sony.com/es_ec/headphones/', daysAgo(0), 'Electrónica', 'Ecuador', sonyImg),
+    mk(sonyKey, 'Sony WH-1000XM5', 'MercadoLibre Ecuador', 390, 'USD', 2, 'https://listado.mercadolibre.com.ec/sony-wh-1000xm5', daysAgo(35), 'Electrónica', 'Ecuador'),
+    mk(sonyKey, 'Sony WH-1000XM5', 'MercadoLibre Ecuador', 320, 'USD', 20, 'https://listado.mercadolibre.com.ec/sony-wh-1000xm5', daysAgo(5), 'Electrónica', 'Ecuador'),
+    mk(sonyKey, 'Sony WH-1000XM5', 'Amazon Ecuador', 349, 'USD', 13, 'https://www.amazon.com/s?k=sony+wh-1000xm5', daysAgo(40), 'Electrónica', 'Internacional'),
+    mk(sonyKey, 'Sony WH-1000XM5', 'Amazon Ecuador', 279, 'USD', 30, 'https://www.amazon.com/s?k=sony+wh-1000xm5', daysAgo(2), 'Electrónica', 'Internacional'),
+  );
+
+  return entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
@@ -891,8 +1008,19 @@ export const useAppStore = create<AppState>()(
         })),
       clearLogs: () => set({ logs: [] }),
 
-      exchangeRates: { USD_COP: 4200, lastUpdated: new Date().toISOString() },
+      exchangeRates: { USD_COP: 3716, lastUpdated: new Date(0).toISOString() },
       updateExchangeRates: (r) => set({ exchangeRates: r }),
+
+      priceHistory: seedPriceHistory(),
+      addPriceHistoryEntries: (entries) =>
+        set((state) => ({
+          priceHistory: [...entries, ...state.priceHistory].slice(0, 2000),
+        })),
+      clearPriceHistory: () => set({ priceHistory: [] }),
+
+      urlChecks: {},
+      updateUrlCheck: (url, result) =>
+        set((state) => ({ urlChecks: { ...state.urlChecks, [url]: result } })),
 
       isScanning: false,
       setIsScanning: (v) => set({ isScanning: v }),
@@ -900,12 +1028,14 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v7',
+      name: 'ecuador-agents-store-v8',
       partialize: (state) => ({
         settings: state.settings,
         exchangeRates: state.exchangeRates,
         companies: state.companies,
         discounts: state.discounts,
+        priceHistory: state.priceHistory,
+        urlChecks: state.urlChecks,
       }),
     }
   )

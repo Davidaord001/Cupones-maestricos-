@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { Play, Loader2, Trash2, ActivitySquare, RefreshCw } from 'lucide-react';
-import { runFullScan, runCompanyDiscoveryAgent, runInfoAgent } from '../services/agentService';
+import { runFullScan, runCompanyDiscoveryAgent, runInfoAgent, runPriceHistoryAgent, runLinkVerifierAgent } from '../services/agentService';
 import { sendTelegramMessage, buildDailyDigest } from '../services/telegramService';
 import { fetchExchangeRates } from '../services/currencyService';
 import { formatDistanceToNow } from 'date-fns';
@@ -88,6 +88,38 @@ const AGENTS_CONFIG = [
       '⚡ Envío instantáneo a @CuponMaestricos_bot',
     ],
   },
+  {
+    id: 'agent-historial',
+    name: 'Agente Historial',
+    icon: '📈',
+    borderColor: 'border-cyan-500/40',
+    bgColor: 'bg-cyan-500/5',
+    btnColor: 'bg-cyan-500 hover:bg-cyan-400 text-gray-900',
+    statusColor: 'text-cyan-400 bg-cyan-500/20',
+    description: 'Registra los precios actuales de todos los productos para construir el historial de evolución. Actualiza el gráfico de precios por tienda.',
+    capabilities: [
+      '📊 Registra precios actuales',
+      '📅 Historial de hasta 45 días',
+      '📉 Detecta tendencias de precio',
+      '🏪 Compara entre tiendas',
+    ],
+  },
+  {
+    id: 'agent-links',
+    name: 'Verificador Links',
+    icon: '🔗',
+    borderColor: 'border-rose-500/40',
+    bgColor: 'bg-rose-500/5',
+    btnColor: 'bg-rose-500 hover:bg-rose-400 text-white',
+    statusColor: 'text-rose-400 bg-rose-500/20',
+    description: 'Verifica que todos los enlaces "Ir a comprar" funcionen. Detecta URLs rotas y genera búsquedas alternativas automáticamente.',
+    capabilities: [
+      '✅ Verifica cada URL activa',
+      '🔄 Genera búsqueda alternativa',
+      '📋 Reporte de links rotos',
+      '🛠 Auto-corrige con búsquedas',
+    ],
+  },
 ];
 
 export default function AgentsPage() {
@@ -95,6 +127,7 @@ export default function AgentsPage() {
     agents, logs, clearLogs, addLog, discounts, companies, settings,
     updateAgentStatus, incrementAgentTasks, addDiscount, updateCompany, addCompany, isScanning, setIsScanning,
     updateExchangeRates, exchangeRates,
+    addPriceHistoryEntries, updateUrlCheck,
   } = useAppStore();
 
   const [runningAgent, setRunningAgent] = useState<string | null>(null);
@@ -165,6 +198,30 @@ export default function AgentsPage() {
           message: `✅ Tipo de cambio actualizado: 1 USD = ${rates.USD_COP.toLocaleString('es-CO')} COP`,
           type: 'success',
         });
+      } else if (agentId === 'agent-historial') {
+        const current = useAppStore.getState().discounts;
+        const entries = await runPriceHistoryAgent(
+          current,
+          (msg, type) => addLog({ agentName: 'Agente Historial', message: msg, type: type ?? 'info' })
+        );
+        addPriceHistoryEntries(entries);
+        addLog({
+          agentName: 'Agente Historial',
+          message: `✅ ${entries.length} precios guardados en historial`,
+          type: 'success',
+        });
+      } else if (agentId === 'agent-links') {
+        const current = useAppStore.getState().discounts;
+        const stats = await runLinkVerifierAgent(
+          current,
+          (msg, type) => addLog({ agentName: 'Verificador Links', message: msg, type: type ?? 'info' }),
+          (url, result) => updateUrlCheck(url, result)
+        );
+        addLog({
+          agentName: 'Verificador Links',
+          message: `✅ ${stats.ok} links OK · ${stats.broken} rotos · ${stats.unknown} desconocidos`,
+          type: stats.broken === 0 ? 'success' : 'warning',
+        });
       }
 
       updateAgentStatus(agentId, 'completed');
@@ -193,7 +250,7 @@ export default function AgentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-white font-bold text-xl">Agentes Virtuales</h2>
-          <p className="text-gray-400 text-sm mt-0.5">5 agentes especializados — ejecuta individualmente o todos a la vez</p>
+          <p className="text-gray-400 text-sm mt-0.5">7 agentes especializados — ejecuta individualmente o todos a la vez</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex gap-2 text-xs">
