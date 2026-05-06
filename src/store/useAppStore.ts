@@ -622,11 +622,11 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
   },
   {
     id: 'r-co-12', companyId: 'c88', companyName: 'Falabella Colombia',
-    title: 'Sony WH-1000XM5 Noise Cancelling — 49% OFF',
+    title: 'Sony WH-1000XM5 Noise Cancelling — 47% OFF',
     description: '8 micrófonos + V1+QN1 ANC, 30h batería, carga 3min=60min, LDAC Hi-Res, Multipoint 2 dispositivos. CMR 0% hasta 12 cuotas.',
-    discountPercent: 49, originalPrice: 2249903, discountedPrice: 1149900,
+    discountPercent: 47, originalPrice: 2249903, discountedPrice: 1199900,
     validFrom: addDays(NOW, -3), validUntil: addDays(NOW, 17),
-    sourceUrl: 'https://www.falabella.com.co/falabella-co/product/881987682/Audifonos-inalambricos-Sony-WH-1000XM5/881987682',
+    sourceUrl: 'https://www.falabella.com.co/falabella-co/product/119322599/Audifonos-inalambricos-noise-cancelling-sony-wh-1000xm5-gris/119322603',
     imageUrl: '/products/co-12-sony-xm5.jpg',
     detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 98, sector: 'Retail',
     country: 'Colombia', currency: 'COP', freeShipping: true,
@@ -894,7 +894,7 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v17',
+      name: 'ecuador-agents-store-v18',
       partialize: (state) => ({
         settings: state.settings,
         exchangeRates: state.exchangeRates,

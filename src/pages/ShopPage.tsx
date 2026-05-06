@@ -472,7 +472,12 @@ export default function ShopPage() {
                             {d.discountedPrice && (
                               <div className="flex flex-col">
                                 <span className="text-green-400 text-xl font-black">{(d as any).currency === 'COP' ? formatCurrency(d.discountedPrice, 'COP') : `$${d.discountedPrice.toFixed(2)}`}</span>
-                                {(d as any).currency === 'COP' && <span className="text-gray-500 text-xs">≈ ${(d.discountedPrice / exchangeRates.USD_COP).toFixed(0)} USD</span>}
+                                {(d as any).currency === 'COP' && (
+                                  <span className="text-blue-400 text-xs font-medium">
+                                    ≈ ${(d.discountedPrice / exchangeRates.USD_COP).toFixed(0)} USD
+                                    <span className="text-gray-600 ml-1">(1 USD = {Math.round(exchangeRates.USD_COP).toLocaleString('es-CO')} COP)</span>
+                                  </span>
+                                )}
                               </div>
                             )}
                             {savings > 0 && <span className="ml-auto text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-semibold">Ahorrás {(d as any).currency === 'COP' ? formatCurrency(savings, 'COP') : `$${savings.toFixed(0)}`}</span>}

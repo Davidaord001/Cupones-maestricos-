@@ -22,6 +22,7 @@ import { fetchExchangeRates } from './currencyService';
 import { sendTelegramMessage, buildDailyDigest } from './telegramService';
 import { scanCompany } from './agentService';
 import { startPriceRefreshCycle, stopPriceRefreshCycle } from './mlSearchService';
+import { startScraperCycle, stopScraperCycle } from './scraperAgentService';
 import type { Discount, Company, UrlCheckResult } from '../store/types';
 
 const MS_VERIFY   = 10 * 60 * 1000;
@@ -481,6 +482,13 @@ export function startPipeline(): void {
     (id: string, patch: Partial<Discount>) => store().updateDiscount(id, patch),
   );
 
+  // Agente Scraper Colombia — entra a páginas de Falabella, Alkosto, Éxito...
+  log('Agente Scraper Colombia: iniciando scraping de páginas reales...', 'info');
+  startScraperCycle(
+    (id: string, patch: Partial<Discount>) => store().updateDiscount(id, patch),
+    (msg, type) => log(msg, type),
+  );
+
   _timers.push(setInterval(() => runVerifyAndPurge().catch(() => {}), MS_VERIFY));
   _timers.push(setInterval(() => runScanBatch().catch(() => {}), MS_SCAN));
   _timers.push(setInterval(() => runFetchExchange().catch(() => {}), MS_EXCHANGE));
@@ -490,6 +498,7 @@ export function startPipeline(): void {
 export function stopPipeline(): void {
   _timers.splice(0).forEach(clearInterval);
   stopPriceRefreshCycle();
+  stopScraperCycle();
   _status.running = false;
 }
 
