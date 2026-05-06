@@ -1,7 +1,7 @@
 import type { ExchangeRates } from '../store/types';
 
 // Tasa de referencia actualizada al 6 mayo 2026
-const FALLBACK_RATE = 3716;
+const FALLBACK_RATE = 4200;
 
 export async function fetchExchangeRates(): Promise<ExchangeRates> {
   const apis = [
