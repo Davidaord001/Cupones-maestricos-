@@ -389,11 +389,11 @@ const defaultDiscounts: Omit<import('./types').Discount, never>[] = [
   },
   {
     id: 'r-ec-06', companyId: 'c27', companyName: 'MercadoLibre Ecuador',
-    title: 'Apple AirPods Pro 2da Gen (USB-C)',
+    title: 'Apple AirPods Pro (2a Gen) USB-C',
     description: 'Chip H2, cancelación activa de ruido 2× mejorada, Modo Ambiente adaptativo, Audio Espacial personalizado, estuche MagSafe USB-C hasta 30h. IPX4.',
-    discountPercent: 17, originalPrice: 299.00, discountedPrice: 249.00,
+    discountPercent: 12, originalPrice: 499.00, discountedPrice: 437.00,
     validFrom: addDays(NOW, -1), validUntil: addDays(NOW, 12),
-    sourceUrl: 'https://listado.mercadolibre.com.ec/celulares-telefonia/accesorios-celulares/airpods-pro-segunda-generacion',
+    sourceUrl: 'https://listado.mercadolibre.com.ec/airpods-pro-segunda-generacion-celulares-telefonia-accesorios',
     imageUrl: '/products/ec-06-airpods-pro2.jpg',
     detectedAt: NOW.toISOString(), predictedDiscount: false, confidence: 97, sector: 'E-commerce',
     country: 'Ecuador',
@@ -894,7 +894,7 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
     {
-      name: 'ecuador-agents-store-v18',
+      name: 'ecuador-agents-store-v19',
       partialize: (state) => ({
         settings: state.settings,
         exchangeRates: state.exchangeRates,

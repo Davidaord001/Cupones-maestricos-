@@ -6,37 +6,41 @@
  * This runs on Vercel servers — NOT blocked by ML API unlike local/Python.
  */
 
-const COP_USD_RATE = 4200; // Mayo 2026
+const COP_USD_RATE = 3715; // Mayo 2026
 
-// Fallback data when ML API is unavailable — prices verified from real stores
+/**
+ * Fallback prices — se usan cuando la API de ML no responde.
+ * IMPORTANTE: las keys DEBEN ser query.toLowerCase() exacto (igual que en mlSearchService.ts)
+ */
 const FALLBACK_PRICES = {
-  // Ecuador USD
-  'samsung galaxy a55 5g 256gb': { price: 389, originalPrice: 459, discountPercent: 15, currency: 'USD', title: 'Samsung Galaxy A55 5G 256GB' },
-  'apple iphone 15 128gb': { price: 799, originalPrice: 869, discountPercent: 8, currency: 'USD', title: 'Apple iPhone 15 128GB' },
-  'apple macbook air m2 256gb': { price: 989, originalPrice: 1099, discountPercent: 10, currency: 'USD', title: 'MacBook Air 13" M2 256GB' },
-  'samsung 65 qled 4k q60d': { price: 699, originalPrice: 899, discountPercent: 22, currency: 'USD', title: 'Smart TV Samsung 65" QLED Q60D' },
-  'playstation 5 slim digital 1tb': { price: 549, originalPrice: 579, discountPercent: 5, currency: 'USD', title: 'PS5 Slim Digital 1TB' },
-  'airpods pro 2 usb-c': { price: 249, originalPrice: 299, discountPercent: 17, currency: 'USD', title: 'Apple AirPods Pro 2da Gen' },
-  'sony wh-1000xm5 ecuador': { price: 319, originalPrice: 399, discountPercent: 20, currency: 'USD', title: 'Sony WH-1000XM5' },
-  'samsung galaxy tab a9 plus 128gb': { price: 269, originalPrice: 299, discountPercent: 10, currency: 'USD', title: 'Samsung Galaxy Tab A9+' },
-  'xiaomi redmi note 13 pro 5g 256gb': { price: 349, originalPrice: 399, discountPercent: 13, currency: 'USD', title: 'Xiaomi Redmi Note 13 Pro 5G' },
-  'nintendo switch oled': { price: 349, originalPrice: 399, discountPercent: 12, currency: 'USD', title: 'Nintendo Switch OLED' },
-  'jbl flip 6 30w': { price: 99, originalPrice: 120, discountPercent: 18, currency: 'USD', title: 'JBL Flip 6' },
-  'asus vivobook 15 oled i5 512gb': { price: 589, originalPrice: 654, discountPercent: 10, currency: 'USD', title: 'ASUS Vivobook 15 OLED i5' },
-  'tcl 55 4k google tv': { price: 444, originalPrice: 509, discountPercent: 13, currency: 'USD', title: 'TCL 55" 4K Google TV' },
-  // Colombia COP→USD
-  'samsung galaxy s24 fe 256gb 5g': { price: 952, originalPrice: 1082, discountPercent: 12, currency: 'USD', title: 'Samsung Galaxy S24 FE 256GB' },
-  'motorola edge 60 fusion 256gb': { price: 214, originalPrice: 238, discountPercent: 10, currency: 'USD', title: 'Motorola Edge 60 Fusion 5G 256GB' },
-  'apple iphone 15 128gb colombia': { price: 686, originalPrice: 762, discountPercent: 10, currency: 'USD', title: 'Apple iPhone 15 128GB' },
-  'macbook air m2 256gb colombia': { price: 1071, originalPrice: 1190, discountPercent: 10, currency: 'USD', title: 'MacBook Air 13" M2 256GB' },
-  'jbl charge 5': { price: 54, originalPrice: 83, discountPercent: 35, currency: 'USD', title: 'JBL Charge 5' },
-  'xiaomi redmi note 13 pro plus 256gb': { price: 238, originalPrice: 333, discountPercent: 28, currency: 'USD', title: 'Xiaomi Redmi Note 13 Pro+ 256GB' },
-  'hisense 55 uled 4k google tv': { price: 357, originalPrice: 548, discountPercent: 35, currency: 'USD', title: 'Hisense 55" ULED 4K' },
-  'lavadora lg 16kg carga frontal': { price: 266, originalPrice: 333, discountPercent: 20, currency: 'USD', title: 'Lavadora LG 16kg' },
-  'nevera samsung bespoke 300l': { price: 357, originalPrice: 476, discountPercent: 25, currency: 'USD', title: 'Nevera Samsung Bespoke 300L' },
-  'asus vivobook 15 i5 512gb colombia': { price: 297, originalPrice: 381, discountPercent: 22, currency: 'USD', title: 'ASUS Vivobook 15 i5 512GB' },
-  'samsung galaxy a35 5g 128gb': { price: 190, originalPrice: 238, discountPercent: 20, currency: 'USD', title: 'Samsung Galaxy A35 5G' },
-  'sony wh-1000xm5 colombia': { price: 274, originalPrice: 536, discountPercent: 49, currency: 'USD', title: 'Sony WH-1000XM5' },
+  // ── Ecuador (USD) ── keys = query exacto en lowercase de mlSearchService.ts ──
+  'samsung galaxy a55 5g 256gb':         { price: 389,  originalPrice: 459,  discountPercent: 15, currency: 'USD', title: 'Samsung Galaxy A55 5G 256GB' },
+  'apple iphone 15 128gb sellado':       { price: 799,  originalPrice: 869,  discountPercent: 8,  currency: 'USD', title: 'Apple iPhone 15 128GB' },
+  'apple macbook air m2 13 256gb':       { price: 989,  originalPrice: 1099, discountPercent: 10, currency: 'USD', title: 'MacBook Air 13" M2 256GB' },
+  'samsung smart tv 65 qled 4k':        { price: 699,  originalPrice: 899,  discountPercent: 22, currency: 'USD', title: 'Smart TV Samsung 65" QLED Q60D' },
+  'playstation 5 slim digital 1tb':      { price: 489,  originalPrice: 549,  discountPercent: 11, currency: 'USD', title: 'PS5 Slim Digital 1TB' },
+  // AirPods Pro 2 — precio real verificado desde MercadoLibre Ecuador (screenshot 6-may-2026)
+  'airpods pro 2 generacion usb-c':      { price: 437,  originalPrice: 499,  discountPercent: 12, currency: 'USD', title: 'Apple AirPods Pro (2a Gen) USB-C' },
+  'sony wh-1000xm5 auriculares':         { price: 319,  originalPrice: 399,  discountPercent: 20, currency: 'USD', title: 'Sony WH-1000XM5' },
+  'samsung galaxy tab a9 plus 128gb wifi':{ price: 269, originalPrice: 299,  discountPercent: 10, currency: 'USD', title: 'Samsung Galaxy Tab A9+ 128GB' },
+  'xiaomi redmi note 13 pro 5g 256gb':   { price: 349,  originalPrice: 399,  discountPercent: 13, currency: 'USD', title: 'Xiaomi Redmi Note 13 Pro 5G' },
+  'nintendo switch oled':                { price: 349,  originalPrice: 399,  discountPercent: 12, currency: 'USD', title: 'Nintendo Switch OLED' },
+  'jbl flip 6 altavoz bluetooth':        { price: 99,   originalPrice: 120,  discountPercent: 18, currency: 'USD', title: 'JBL Flip 6' },
+  'asus vivobook 15 oled core i5 512gb': { price: 589,  originalPrice: 654,  discountPercent: 10, currency: 'USD', title: 'ASUS Vivobook 15 OLED i5' },
+  'tcl 55 4k google tv':                 { price: 444,  originalPrice: 509,  discountPercent: 13, currency: 'USD', title: 'TCL 55" 4K Google TV' },
+  // ── Colombia (USD equivalente, scraper actualiza con COP real) ────────────
+  'samsung galaxy s24 fe 256gb 5g':      { price: 952,  originalPrice: 1082, discountPercent: 12, currency: 'USD', title: 'Samsung Galaxy S24 FE 256GB' },
+  'motorola edge 60 fusion 5g 256gb':    { price: 214,  originalPrice: 238,  discountPercent: 10, currency: 'USD', title: 'Motorola Edge 60 Fusion 5G' },
+  'apple iphone 15 128gb nuevo sellado': { price: 686,  originalPrice: 762,  discountPercent: 10, currency: 'USD', title: 'Apple iPhone 15 128GB' },
+  'apple macbook air m2 256gb':          { price: 1071, originalPrice: 1190, discountPercent: 10, currency: 'USD', title: 'MacBook Air 13" M2' },
+  'jbl charge 5 bluetooth ip67':         { price: 54,   originalPrice: 83,   discountPercent: 35, currency: 'USD', title: 'JBL Charge 5' },
+  'xiaomi redmi note 13 pro plus 256gb': { price: 238,  originalPrice: 333,  discountPercent: 28, currency: 'USD', title: 'Xiaomi Redmi Note 13 Pro+' },
+  'hisense 55 uled 4k google tv':        { price: 357,  originalPrice: 548,  discountPercent: 35, currency: 'USD', title: 'Hisense 55" ULED 4K' },
+  'lg lavadora 16kg carga frontal':      { price: 266,  originalPrice: 333,  discountPercent: 20, currency: 'USD', title: 'Lavadora LG 16kg' },
+  'samsung nevera bespoke 300 litros':   { price: 357,  originalPrice: 476,  discountPercent: 25, currency: 'USD', title: 'Nevera Samsung Bespoke 300L' },
+  'asus vivobook 15 core i5 512gb':      { price: 297,  originalPrice: 381,  discountPercent: 22, currency: 'USD', title: 'ASUS Vivobook 15 i5' },
+  'samsung galaxy a35 5g 128gb':         { price: 190,  originalPrice: 238,  discountPercent: 20, currency: 'USD', title: 'Samsung Galaxy A35 5G' },
+  'sony wh-1000xm5 audifonos noise cancelling': { price: 274, originalPrice: 536, discountPercent: 49, currency: 'USD', title: 'Sony WH-1000XM5' },
 };
 
 function normalizePrices(item, site) {
@@ -69,7 +73,7 @@ function normalizePrices(item, site) {
   };
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -140,4 +144,4 @@ module.exports = async (req, res) => {
     }
     return res.status(500).json({ error: err.message, results: [], source: 'error' });
   }
-};
+}
